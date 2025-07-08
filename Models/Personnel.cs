@@ -63,10 +63,10 @@ namespace ComprehensiveManagementSystem.Models
 
     public enum Gender
     {
-        [Display(Name = "男")]
-        Male = 1,
         [Display(Name = "女")]
-        Female = 2
+        Female = 0,
+        [Display(Name = "男")]
+        Male = 1
     }
 
     public enum PersonnelStatus
