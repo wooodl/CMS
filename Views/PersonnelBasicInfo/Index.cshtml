@@ -1,0 +1,162 @@
+@model IEnumerable<ComprehensiveManagementSystem.Models.PersonnelBasicInfo>
+
+@{
+    ViewData["Title"] = "人员管理";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>人员管理</h3>
+            </div>
+            <div class="layui-card-body">
+                
+                <!-- 搜索和筛选区域 -->
+                <form method="get" class="layui-form layui-form-pane" style="margin-bottom: 20px;">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">姓名/身份证/电话</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="请输入关键词" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">部门</label>
+                            <div class="layui-input-inline">
+                                <select name="departmentId" lay-search="">
+                                    <option value="">全部部门</option>
+                                    @if (ViewData["Departments"] is SelectList departments)
+                                    {
+                                        @foreach (var item in departments)
+                                        {
+                                            <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-inline">
+                                <select name="gender">
+                                    <option value="">全部</option>
+                                    <option value="0" selected="@(ViewData["CurrentGender"]?.ToString() == "0")">女</option>
+                                    <option value="1" selected="@(ViewData["CurrentGender"]?.ToString() == "1")">男</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-search"></i> 搜索
+                            </button>
+                            <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-refresh"></i> 重置
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 操作按钮 -->
+                <div style="margin-bottom: 15px;">
+                    <a href="@Url.Action("Create")" class="layui-btn layui-btn-normal">
+                        <i class="layui-icon layui-icon-add-1"></i> 新增人员
+                    </a>
+                </div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-normal" lay-close="">
+                        <i class="layui-icon layui-icon-ok-circle"></i> @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                <!-- 数据表格 -->
+                <table class="layui-table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>身份证号</th>
+                            <th>部门</th>
+                            <th>职务</th>
+                            <th>联系电话</th>
+                            <th>入职时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@(item.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
+                                <td>@(item.IdCard.Substring(0, 6) + "****" + item.IdCard.Substring(14))</td>
+                                <td>@(item.Department?.Name ?? "-")</td>
+                                <td>@(item.Duty ?? "-")</td>
+                                <td>@(item.Phone ?? "-")</td>
+                                <td>@item.HireDate.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <div class="layui-btn-group">
+                                        <a href="@Url.Action("Details", new { id = item.PersonnelId })" class="layui-btn layui-btn-sm layui-btn-primary">
+                                            <i class="layui-icon layui-icon-about"></i> 详情
+                                        </a>
+                                        <a href="@Url.Action("Edit", new { id = item.PersonnelId })" class="layui-btn layui-btn-sm layui-btn-normal">
+                                            <i class="layui-icon layui-icon-edit"></i> 编辑
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.PersonnelId })" class="layui-btn layui-btn-sm layui-btn-danger">
+                                            <i class="layui-icon layui-icon-delete"></i> 删除
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <!-- 分页 -->
+                @if ((int)ViewData["TotalCount"] > (int)ViewData["PageSize"])
+                {
+                    <div id="pagination" style="text-align: center; margin-top: 20px;"></div>
+                }
+
+                <!-- 统计信息 -->
+                <div class="layui-text" style="margin-top: 15px;">
+                    <p>共 @ViewData["TotalCount"] 条记录，当前第 @ViewData["PageNumber"] 页，共 @ViewData["TotalPages"] 页</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        layui.use(['form', 'laypage'], function(){
+            var form = layui.form;
+            var laypage = layui.laypage;
+            
+            // 渲染分页
+            @if ((int)ViewData["TotalCount"] > (int)ViewData["PageSize"])
+            {
+                <text>
+                laypage.render({
+                    elem: 'pagination',
+                    count: @ViewData["TotalCount"],
+                    limit: @ViewData["PageSize"],
+                    curr: @ViewData["PageNumber"],
+                    layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+                    jump: function(obj, first){
+                        if(!first){
+                            var url = '@Url.Action("Index")';
+                            var params = new URLSearchParams(window.location.search);
+                            params.set('pageNumber', obj.curr);
+                            params.set('pageSize', obj.limit);
+                            window.location.href = url + '?' + params.toString();
+                        }
+                    }
+                });
+                </text>
+            }
+        });
+    </script>
+}

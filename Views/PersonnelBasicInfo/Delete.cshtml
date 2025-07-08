@@ -1,0 +1,130 @@
+@model ComprehensiveManagementSystem.Models.PersonnelBasicInfo
+
+@{
+    ViewData["Title"] = "删除人员";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>删除人员确认</h3>
+            </div>
+            <div class="layui-card-body">
+                
+                <div class="layui-alert layui-alert-danger">
+                    <i class="layui-icon layui-icon-close-fill"></i>
+                    <strong>警告：</strong>您确定要删除以下人员信息吗？此操作将同时删除该人员的所有相关记录（奖惩、履历、配偶、家庭成员、工作记录、活动记录等），删除后无法恢复！
+                </div>
+
+                <div style="margin: 30px 0;">
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <table class="layui-table">
+                                <tbody>
+                                    <tr>
+                                        <td width="100"><strong>姓名</strong></td>
+                                        <td>@Model.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>性别</strong></td>
+                                        <td>@(Model.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>身份证号</strong></td>
+                                        <td>@Model.IdCard</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>出生年月</strong></td>
+                                        <td>@Model.BirthDate.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>籍贯</strong></td>
+                                        <td>@(Model.NativePlace ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>学历</strong></td>
+                                        <td>@(Model.Education ?? "-")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-col-md6">
+                            <table class="layui-table">
+                                <tbody>
+                                    <tr>
+                                        <td width="100"><strong>入职时间</strong></td>
+                                        <td>@Model.HireDate.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>部门</strong></td>
+                                        <td>@(Model.Department?.Name ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>岗位</strong></td>
+                                        <td>@(Model.Position ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>职务</strong></td>
+                                        <td>@(Model.Duty ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>联系电话</strong></td>
+                                        <td>@(Model.Phone ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>创建时间</strong></td>
+                                        <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post" class="layui-form">
+                    <input type="hidden" asp-for="PersonnelId" />
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-danger" lay-submit="" lay-filter="delete">
+                                <i class="layui-icon layui-icon-delete"></i> 确认删除
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                            <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回列表
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        layui.use(['form', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            
+            // 表单提交确认
+            form.on('submit(delete)', function(data){
+                layer.confirm('您确定要删除这条人员记录吗？删除后无法恢复！', {
+                    icon: 3,
+                    title: '删除确认',
+                    btn: ['确定删除', '取消']
+                }, function(index){
+                    // 用户确认删除，继续提交表单
+                    layer.close(index);
+                    return true;
+                }, function(){
+                    // 用户取消删除
+                    return false;
+                });
+                return false; // 阻止默认提交，等待用户确认
+            });
+        });
+    </script>
+}

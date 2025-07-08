@@ -1,0 +1,538 @@
+@model ComprehensiveManagementSystem.Models.PersonnelBasicInfo
+
+@{
+    ViewData["Title"] = "人员详情";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>人员详情 - @Model.Name</h3>
+            </div>
+            <div class="layui-card-body">
+                
+                <!-- 操作按钮 -->
+                <div style="margin-bottom: 20px;">
+                    <a href="@Url.Action("Edit", new { id = Model.PersonnelId })" class="layui-btn layui-btn-normal">
+                        <i class="layui-icon layui-icon-edit"></i> 编辑信息
+                    </a>
+                    <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                        <i class="layui-icon layui-icon-return"></i> 返回列表
+                    </a>
+                </div>
+
+                <!-- Tab 选项卡 -->
+                <div class="layui-tab layui-tab-brief" lay-filter="personnelTab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">基本信息</li>
+                        <li>奖惩记录</li>
+                        <li>工作履历</li>
+                        <li>配偶信息</li>
+                        <li>家庭成员</li>
+                        <li>工作记录</li>
+                        <li>活动记录</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        
+                        <!-- 基本信息 -->
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-row layui-col-space20">
+                                <div class="layui-col-md6">
+                                    <table class="layui-table">
+                                        <tbody>
+                                            <tr>
+                                                <td width="100"><strong>姓名</strong></td>
+                                                <td>@Model.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>性别</strong></td>
+                                                <td>@(Model.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>身份证号</strong></td>
+                                                <td>@Model.IdCard</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>出生年月</strong></td>
+                                                <td>@Model.BirthDate.ToString("yyyy-MM-dd")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>籍贯</strong></td>
+                                                <td>@(Model.NativePlace ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>学历</strong></td>
+                                                <td>@(Model.Education ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>政治面貌</strong></td>
+                                                <td>@(Model.PoliticalStatus ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>婚姻状况</strong></td>
+                                                <td>
+                                                    @switch(Model.MaritalStatus)
+                                                    {
+                                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Single:
+                                                            <text>未婚</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Married:
+                                                            <text>已婚</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Divorced:
+                                                            <text>离异</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Widowed:
+                                                            <text>丧偶</text>
+                                                            break;
+                                                    }
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <table class="layui-table">
+                                        <tbody>
+                                            <tr>
+                                                <td width="100"><strong>入职时间</strong></td>
+                                                <td>@Model.HireDate.ToString("yyyy-MM-dd")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>部门</strong></td>
+                                                <td>@(Model.Department?.Name ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>岗位</strong></td>
+                                                <td>@(Model.Position ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>职务</strong></td>
+                                                <td>@(Model.Duty ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>人员类别</strong></td>
+                                                <td>@(Model.PersonnelCategory ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>级别</strong></td>
+                                                <td>@(Model.Grade ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>联系电话</strong></td>
+                                                <td>@(Model.Phone ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>近三年优秀次数</strong></td>
+                                                <td>@Model.ExcellentCount 次</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.HomeAddress) || !string.IsNullOrEmpty(Model.WorkAddress))
+                            {
+                                <fieldset class="layui-elem-field">
+                                    <legend>地址信息</legend>
+                                    <div class="layui-field-box">
+                                        @if (!string.IsNullOrEmpty(Model.HomeAddress))
+                                        {
+                                            <p><strong>家庭住址：</strong>@Model.HomeAddress</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.WorkAddress))
+                                        {
+                                            <p><strong>单位地址：</strong>@Model.WorkAddress</p>
+                                        }
+                                    </div>
+                                </fieldset>
+                            }
+                        </div>
+
+                        <!-- 奖惩记录 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addRewardPunishment()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加奖惩记录
+                                </button>
+                            </div>
+                            @if (Model.RewardPunishments.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>类型</th>
+                                            <th>级别</th>
+                                            <th>原因</th>
+                                            <th>决定单位</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.RewardPunishments.OrderByDescending(r => r.RecordDate))
+                                        {
+                                            <tr>
+                                                <td>@item.RecordDate.ToString("yyyy-MM-dd")</td>
+                                                <td>
+                                                    <span class="layui-badge @(item.Type == ComprehensiveManagementSystem.Models.RewardPunishmentType.Reward ? "layui-bg-green" : "layui-bg-red")">
+                                                        @(item.Type == ComprehensiveManagementSystem.Models.RewardPunishmentType.Reward ? "奖励" : "处罚")
+                                                    </span>
+                                                </td>
+                                                <td>@item.Level</td>
+                                                <td>@item.Reason</td>
+                                                <td>@item.DecisionUnit</td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'RewardPunishment')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无奖惩记录</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- 工作履历 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addHistory()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加履历记录
+                                </button>
+                            </div>
+                            @if (Model.Histories.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>开始时间</th>
+                                            <th>结束时间</th>
+                                            <th>工作地点</th>
+                                            <th>担任角色</th>
+                                            <th>工作描述</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Histories.OrderByDescending(h => h.StartDate))
+                                        {
+                                            <tr>
+                                                <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                                <td>@(item.EndDate?.ToString("yyyy-MM-dd") ?? "至今")</td>
+                                                <td>@item.WorkPlace</td>
+                                                <td>@item.Role</td>
+                                                <td>@(item.WorkDescription ?? "-")</td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'History')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无履历记录</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- 配偶信息 -->
+                        <div class="layui-tab-item">
+                            @if (Model.Spouse != null && !Model.Spouse.IsDeleted)
+                            {
+                                <div style="margin-bottom: 15px;">
+                                    <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="editSpouse()">
+                                        <i class="layui-icon layui-icon-edit"></i> 编辑配偶信息
+                                    </button>
+                                </div>
+                                <div class="layui-row layui-col-space20">
+                                    <div class="layui-col-md6">
+                                        <table class="layui-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="100"><strong>姓名</strong></td>
+                                                    <td>@Model.Spouse.Name</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>籍贯</strong></td>
+                                                    <td>@(Model.Spouse.NativePlace ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>出生年月</strong></td>
+                                                    <td>@Model.Spouse.BirthDate.ToString("yyyy-MM-dd")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>民族</strong></td>
+                                                    <td>@(Model.Spouse.Nation ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>学历</strong></td>
+                                                    <td>@(Model.Spouse.Education ?? "-")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="layui-col-md6">
+                                        <table class="layui-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="100"><strong>工作单位</strong></td>
+                                                    <td>@(Model.Spouse.WorkUnit ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>职务</strong></td>
+                                                    <td>@(Model.Spouse.Position ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>联系电话</strong></td>
+                                                    <td>@(Model.Spouse.Phone ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>是否本地</strong></td>
+                                                    <td>@(Model.Spouse.IsLocal ? "是" : "否")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>住址</strong></td>
+                                                    <td>@(Model.Spouse.Address ?? "-")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无配偶信息</p>
+                                    <button class="layui-btn layui-btn-normal" onclick="addSpouse()">
+                                        <i class="layui-icon layui-icon-add-1"></i> 添加配偶信息
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- 家庭成员 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addFamilyMember()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加家庭成员
+                                </button>
+                            </div>
+                            @if (Model.FamilyMembers.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>关系</th>
+                                            <th>姓名</th>
+                                            <th>性别</th>
+                                            <th>出生年月</th>
+                                            <th>工作单位</th>
+                                            <th>联系电话</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.FamilyMembers)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @switch(item.RelationType)
+                                                    {
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.Child:
+                                                            <text>子女</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.Father:
+                                                            <text>父亲</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.Mother:
+                                                            <text>母亲</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.SpouseFather:
+                                                            <text>配偶父亲</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.SpouseMother:
+                                                            <text>配偶母亲</text>
+                                                            break;
+                                                        case ComprehensiveManagementSystem.Models.FamilyRelationType.Other:
+                                                            <text>其他</text>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>@item.Name</td>
+                                                <td>@(item.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
+                                                <td>@item.BirthDate.ToString("yyyy-MM-dd")</td>
+                                                <td>@(item.WorkUnit ?? "-")</td>
+                                                <td>@(item.Phone ?? "-")</td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'FamilyMember')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无家庭成员信息</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- 工作记录 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addWorkRecord()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加工作记录
+                                </button>
+                            </div>
+                            @if (Model.WorkRecords.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>工作时间</th>
+                                            <th>工作地点</th>
+                                            <th>工作内容</th>
+                                            <th>工作类型</th>
+                                            <th>工作成果</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.WorkRecords.OrderByDescending(w => w.WorkDate))
+                                        {
+                                            <tr>
+                                                <td>@item.WorkDate.ToString("yyyy-MM-dd")</td>
+                                                <td>@item.WorkPlace</td>
+                                                <td>@item.WorkContent</td>
+                                                <td>@(item.WorkType ?? "-")</td>
+                                                <td>@(item.WorkResult ?? "-")</td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'WorkRecord')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无工作记录</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- 活动记录 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addActivityRecord()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加活动记录
+                                </button>
+                            </div>
+                            @if (Model.ActivityRecords.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>开始时间</th>
+                                            <th>结束时间</th>
+                                            <th>活动地点</th>
+                                            <th>活动名称</th>
+                                            <th>参与角色</th>
+                                            <th>获得成果</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.ActivityRecords.OrderByDescending(a => a.StartDate))
+                                        {
+                                            <tr>
+                                                <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                                                <td>@(item.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                                <td>@item.ActivityPlace</td>
+                                                <td>@item.ActivityName</td>
+                                                <td>@item.ParticipantRole</td>
+                                                <td>@(item.Achievement ?? "-")</td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'ActivityRecord')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无活动记录</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        layui.use(['element', 'layer'], function(){
+            var element = layui.element;
+            var layer = layui.layer;
+            
+            // 添加功能的占位函数
+            window.addRewardPunishment = function() {
+                layer.msg('奖惩记录管理功能开发中...', {icon: 6});
+            };
+            
+            window.addHistory = function() {
+                layer.msg('履历记录管理功能开发中...', {icon: 6});
+            };
+            
+            window.addSpouse = function() {
+                layer.msg('配偶信息管理功能开发中...', {icon: 6});
+            };
+            
+            window.editSpouse = function() {
+                layer.msg('配偶信息编辑功能开发中...', {icon: 6});
+            };
+            
+            window.addFamilyMember = function() {
+                layer.msg('家庭成员管理功能开发中...', {icon: 6});
+            };
+            
+            window.addWorkRecord = function() {
+                layer.msg('工作记录管理功能开发中...', {icon: 6});
+            };
+            
+            window.addActivityRecord = function() {
+                layer.msg('活动记录管理功能开发中...', {icon: 6});
+            };
+            
+            window.deleteRecord = function(id, type) {
+                layer.confirm('确定要删除这条记录吗？', {icon: 3, title:'提示'}, function(index){
+                    layer.msg('删除功能开发中...', {icon: 6});
+                    layer.close(index);
+                });
+            };
+        });
+    </script>
+}
