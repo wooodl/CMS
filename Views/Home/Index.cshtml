@@ -1,0 +1,161 @@
+@{
+    ViewData["Title"] = "首页";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2>欢迎使用综合管理系统</h2>
+            </div>
+            <div class="layui-card-body">
+                <blockquote class="layui-elem-quote layui-quote-nm">
+                    系统功能模块包括：人员管理、飞机管理、装备管理、设备管理、装具管理、库存管理、质量控制、工作开展、各项统计、系统管理等。
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <!-- 统计卡片 -->
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-user"></i>
+                人员统计
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs6">
+                        <h1 style="margin: 0;">125</h1>
+                        <p>总人数</p>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <i class="layui-icon layui-icon-user" style="font-size: 50px; color: #5FB878;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-util"></i>
+                飞机统计
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs6">
+                        <h1 style="margin: 0;">32</h1>
+                        <p>总架数</p>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <i class="layui-icon layui-icon-util" style="font-size: 50px; color: #1E9FFF;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-component"></i>
+                装备统计
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs6">
+                        <h1 style="margin: 0;">186</h1>
+                        <p>总件数</p>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <i class="layui-icon layui-icon-component" style="font-size: 50px; color: #FFB800;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <i class="layui-icon layui-icon-list"></i>
+                库存统计
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space5">
+                    <div class="layui-col-xs6">
+                        <h1 style="margin: 0;">1286</h1>
+                        <p>库存项目</p>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <i class="layui-icon layui-icon-list" style="font-size: 50px; color: #FF5722;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">快速操作</div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-xs6">
+                        <a href="@Url.Action("Create", "Personnel")" class="layui-btn layui-btn-normal layui-btn-fluid">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            添加人员
+                        </a>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <a href="#" class="layui-btn layui-btn-warm layui-btn-fluid">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            添加飞机
+                        </a>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <a href="#" class="layui-btn layui-btn-danger layui-btn-fluid">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            库存入库
+                        </a>
+                    </div>
+                    <div class="layui-col-xs6">
+                        <a href="#" class="layui-btn layui-btn-primary layui-btn-fluid">
+                            <i class="layui-icon layui-icon-subtraction"></i>
+                            库存出库
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="layui-col-md6">
+        <div class="layui-card">
+            <div class="layui-card-header">系统公告</div>
+            <div class="layui-card-body">
+                <ul class="layui-timeline">
+                    <li class="layui-timeline-item">
+                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                        <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">系统上线</h3>
+                            <p>综合管理系统正式上线运行，欢迎使用！</p>
+                        </div>
+                    </li>
+                    <li class="layui-timeline-item">
+                        <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
+                        <div class="layui-timeline-content layui-text">
+                            <h3 class="layui-timeline-title">功能更新</h3>
+                            <p>新增库存管理模块，支持入库、出库、移库等操作。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

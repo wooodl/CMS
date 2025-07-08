@@ -1,0 +1,105 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "登录";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md6 layui-col-md-offset3">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2>用户登录</h2>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="Login" method="post" class="layui-form">
+                    <div asp-validation-summary="All" class="layui-text layui-text-red"></div>
+                    <input name="ReturnUrl" value="@ViewData["ReturnUrl"]" type="hidden" />
+                    <input asp-for="CaptchaId" type="hidden" />
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Email" class="layui-input" placeholder="请输入邮箱" />
+                            <span asp-validation-for="Email" class="layui-text layui-text-red"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Password" class="layui-input" placeholder="请输入密码" />
+                            <span asp-validation-for="Password" class="layui-text layui-text-red"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">验证码</label>
+                        <div class="layui-input-block">
+                            <div class="layui-row">
+                                <div class="layui-col-md6">
+                                    <input asp-for="CaptchaCode" class="layui-input" placeholder="请输入验证码" />
+                                    <span asp-validation-for="CaptchaCode" class="layui-text layui-text-red"></span>
+                                </div>
+                                <div class="layui-col-md6" style="text-align: center;">
+                                    <img id="captchaImage" src="/Captcha/GenerateCaptcha" alt="验证码" 
+                                         style="cursor: pointer; height: 38px; border: 1px solid #e6e6e6;" 
+                                         onclick="refreshCaptcha()" title="点击刷新验证码" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input asp-for="RememberMe" type="checkbox" lay-skin="primary" title="记住我" />
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-fluid">登录</button>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <a asp-action="Register" class="layui-btn layui-btn-primary layui-btn-fluid">还没有账户？点击注册</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        layui.use(['form', 'layer'], function(){
+            var form = layui.form;
+            var layer = layui.layer;
+            
+            // 刷新验证码
+            window.refreshCaptcha = function() {
+                var captchaImage = document.getElementById('captchaImage');
+                var captchaIdInput = document.querySelector('input[name="CaptchaId"]');
+                
+                // 生成新的验证码ID
+                var newCaptchaId = generateUUID();
+                captchaIdInput.value = newCaptchaId;
+                
+                // 更新验证码图片
+                captchaImage.src = '/Captcha/GenerateCaptcha?id=' + newCaptchaId + '&t=' + new Date().getTime();
+            };
+            
+            // 生成UUID
+            function generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            
+            // 页面加载时初始化验证码
+            refreshCaptcha();
+        });
+    </script>
+}
