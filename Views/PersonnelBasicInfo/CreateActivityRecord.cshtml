@@ -1,0 +1,156 @@
+@model ComprehensiveManagementSystem.Models.PersonnelActivityRecord
+
+@{
+    ViewData["Title"] = "添加活动记录";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>添加活动记录 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="CreateActivityRecord" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="PersonnelId" />
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开始时间 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="StartDate" type="date" class="layui-input" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">结束时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="EndDate" type="date" class="layui-input" />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动名称 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="ActivityName" class="layui-input" placeholder="请输入活动名称" />
+                                    <span asp-validation-for="ActivityName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动地点 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="ActivityPlace" class="layui-input" placeholder="请输入活动地点" />
+                                    <span asp-validation-for="ActivityPlace" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">参与角色 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="ParticipantRole" class="layui-input" placeholder="请输入参与角色" />
+                                    <span asp-validation-for="ParticipantRole" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动类型</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="ActivityType" class="layui-input" placeholder="请输入活动类型" />
+                                    <span asp-validation-for="ActivityType" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">组织单位</label>
+                        <div class="layui-input-block">
+                            <input asp-for="OrganizingUnit" class="layui-input" placeholder="请输入活动组织单位" />
+                            <span asp-validation-for="OrganizingUnit" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">活动描述</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="ActivityDescription" class="layui-textarea" placeholder="请输入活动描述"></textarea>
+                            <span asp-validation-for="ActivityDescription" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">参与表现</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Performance" class="layui-textarea" placeholder="请输入参与表现"></textarea>
+                            <span asp-validation-for="Performance" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">获得成果/奖项</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Achievement" class="layui-input" placeholder="请输入获得成果或奖项" />
+                            <span asp-validation-for="Achievement" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId, tab = 8 })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('活动记录添加页面已加载');
+            
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('活动记录表单提交事件被触发');
+                    return true;
+                });
+            }
+        });
+    </script>
+}
+
+@section ValidationScripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,151 @@
+@{
+    ViewData["Title"] = "机构管理";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <div class="layui-col-md6">
+                        <h3>机构管理</h3>
+                    </div>
+                    <div class="layui-col-md6" style="text-align: right;">
+                        <a href="@Url.Action("Create")" class="layui-btn layui-btn-normal">
+                            <i class="layui-icon layui-icon-add-1"></i>
+                            添加机构
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row">
+                    <div class="layui-col-md6">
+                        <div id="organizationTree"></div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header">机构详情</div>
+                            <div class="layui-card-body">
+                                <div id="organizationDetail" style="min-height: 400px;">
+                                    <div class="layui-text" style="text-align: center; margin-top: 100px; color: #999;">
+                                        <i class="layui-icon layui-icon-about" style="font-size: 48px;"></i>
+                                        <p style="margin-top: 20px;">请选择左侧机构查看详情</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 确保 DOM 和 layui 都加载完成后再执行
+document.addEventListener('DOMContentLoaded', function() {
+    // 确保 layui 完全加载后再执行
+    layui.config({
+        base: '/lib/layui/' // 确保路径正确
+    }).use(['tree', 'element', 'layer'], function(){
+        var tree = layui.tree;
+        var element = layui.element;
+        var layer = layui.layer;
+        
+        // 加载树形数据
+        loadTreeData();
+    
+    function loadTreeData() {
+        fetch('/Organization/GetTreeData')
+            .then(response => {
+                console.log('API响应状态:', response.status); // 调试信息
+                return response.json();
+            })
+            .then(result => {
+                console.log('获取到的响应数据:', result); // 调试信息
+                
+                if (!result.success) {
+                    console.error('API返回错误:', result.error);
+                    layer.msg('获取机构数据失败: ' + result.error);
+                    document.getElementById('organizationDetail').innerHTML = '<p>获取机构数据失败: ' + result.error + '</p>';
+                    return;
+                }
+                
+                var data = result.data;
+                if (!data || data.length === 0) {
+                    console.warn('没有获取到机构数据');
+                    document.getElementById('organizationDetail').innerHTML = '<p>暂无机构数据</p>';
+                    return;
+                }
+                
+                // 渲染树形结构
+                tree.render({
+                    elem: '#organizationTree',
+                    data: data,
+                    showLine: true,
+                    showCheckbox: false,
+                    id: 'organizationTree',
+                    isJump: false,
+                    click: function(obj) {
+                        console.log('点击的节点:', obj); // 调试信息
+                        showOrganizationDetail(obj.data);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('加载机构数据失败:', error);
+                layer.msg('加载机构数据失败');
+                document.getElementById('organizationDetail').innerHTML = '<p>加载机构数据失败: ' + error.message + '</p>';
+            });
+    }
+    
+    // 显示机构详情
+    function showOrganizationDetail(data) {
+        console.log('显示机构详情:', data); // 调试信息
+        
+        var typeText = getTypeText(data.type);
+        var html = '<div class="layui-form-item">' +
+            '<label class="layui-form-label">机构名称：</label>' +
+            '<div class="layui-input-block">' + (data.title || '未设置') + '</div>' +
+            '</div>' +
+            '<div class="layui-form-item">' +
+            '<label class="layui-form-label">机构类型：</label>' +
+            '<div class="layui-input-block">' + typeText + '</div>' +
+            '</div>' +
+            '<div class="layui-form-item">' +
+            '<label class="layui-form-label">显示序号：</label>' +
+            '<div class="layui-input-block">' + (data.displayOrder || '0') + '</div>' +
+            '</div>' +
+            '<div class="layui-form-item">' +
+            '<label class="layui-form-label">地点：</label>' +
+            '<div class="layui-input-block">' + (data.location || '未设置') + '</div>' +
+            '</div>' +
+            '<div class="layui-form-item">' +
+            '<label class="layui-form-label">备注：</label>' +
+            '<div class="layui-input-block">' + (data.remark || '无') + '</div>' +
+            '</div>' +
+            '<div class="layui-form-item">' +
+            '<label class="layui-form-label">操作：</label>' +
+            '<div class="layui-input-block">' +
+            '<a href="/Organization/Details/' + data.id + '" class="layui-btn layui-btn-primary layui-btn-sm">查看详情</a>' +
+            '<a href="/Organization/Edit/' + data.id + '" class="layui-btn layui-btn-normal layui-btn-sm">编辑</a>' +
+            '<a href="/Organization/Delete/' + data.id + '" class="layui-btn layui-btn-danger layui-btn-sm">删除</a>' +
+            '</div>' +
+            '</div>';
+        
+        document.getElementById('organizationDetail').innerHTML = html;
+    }
+    
+    // 获取类型文本
+    function getTypeText(type) {
+        switch(type) {
+            case 'Unit': return '单位';
+            case 'Department': return '部门';
+            case 'Group': return '小组';
+            default: return '未知';
+        }
+    }
+    });
+});
+</script>

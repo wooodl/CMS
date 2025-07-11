@@ -12,6 +12,15 @@
             </div>
             <div class="layui-card-body">
                 
+                <!-- 成功消息显示 -->
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-normal" lay-close="">
+                        <i class="layui-icon layui-icon-ok-circle"></i>
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                
                 <!-- 搜索和筛选区域 -->
                 <form method="get" class="layui-form layui-form-pane" style="margin-bottom: 20px;">
                     <div class="layui-form-item">
@@ -77,11 +86,14 @@
                         <tr>
                             <th>姓名</th>
                             <th>性别</th>
-                            <th>身份证号</th>
                             <th>部门</th>
-                            <th>职务</th>
-                            <th>联系电话</th>
-                            <th>入职时间</th>
+                            <th>级别</th>
+                            <th>籍贯</th>
+                            <th>出生年月</th>
+                            <th>民族</th>
+                            <th>政治面貌</th>
+                            <th>学历</th>
+                            <th>婚姻状况</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -91,11 +103,30 @@
                             <tr>
                                 <td>@item.Name</td>
                                 <td>@(item.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
-                                <td>@(item.IdCard.Substring(0, 6) + "****" + item.IdCard.Substring(14))</td>
                                 <td>@(item.Department?.Name ?? "-")</td>
-                                <td>@(item.Duty ?? "-")</td>
-                                <td>@(item.Phone ?? "-")</td>
-                                <td>@item.HireDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(item.Grade ?? "-")</td>
+                                <td>@(item.NativePlace ?? "-")</td>
+                                <td>@item.BirthDate.ToString("yyyy-MM-dd")</td>
+                                <td>@(item.Nation ?? "-")</td>
+                                <td>@(item.PoliticalStatus ?? "-")</td>
+                                <td>@(item.Education ?? "-")</td>
+                                <td>
+                                    @switch(item.MaritalStatus)
+                                    {
+                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Single:
+                                            <text>未婚</text>
+                                            break;
+                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Married:
+                                            <text>已婚</text>
+                                            break;
+                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Divorced:
+                                            <text>离异</text>
+                                            break;
+                                        case ComprehensiveManagementSystem.Models.MaritalStatus.Widowed:
+                                            <text>丧偶</text>
+                                            break;
+                                    }
+                                </td>
                                 <td>
                                     <div class="layui-btn-group">
                                         <a href="@Url.Action("Details", new { id = item.PersonnelId })" class="layui-btn layui-btn-sm layui-btn-primary">

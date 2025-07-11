@@ -1,0 +1,123 @@
+@model ComprehensiveManagementSystem.Models.PersonnelRewardPunishment
+
+@{
+    ViewData["Title"] = "添加奖惩记录";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>添加奖惩记录 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="CreateRewardPunishment" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="PersonnelId" />
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">奖惩时间 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="RecordDate" type="date" class="layui-input" />
+                                    <span asp-validation-for="RecordDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">奖惩类型 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <select asp-for="Type" class="layui-input">
+                                        <option value="">请选择奖惩类型</option>
+                                        <option value="0">奖励</option>
+                                        <option value="1">处罚</option>
+                                    </select>
+                                    <span asp-validation-for="Type" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">奖惩级别 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="Level" class="layui-input" placeholder="请输入奖惩级别" />
+                                    <span asp-validation-for="Level" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">决定单位 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="DecisionUnit" class="layui-input" placeholder="请输入奖惩决定单位" />
+                                    <span asp-validation-for="DecisionUnit" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">奖惩原因 <span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Reason" class="layui-textarea" placeholder="请输入奖惩原因"></textarea>
+                            <span asp-validation-for="Reason" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">决定文号</label>
+                        <div class="layui-input-block">
+                            <input asp-for="DecisionDocument" class="layui-input" placeholder="请输入奖惩决定文号" />
+                            <span asp-validation-for="DecisionDocument" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId, tab = 2 })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('奖惩记录添加页面已加载');
+            
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('奖惩记录表单提交事件被触发');
+                    return true;
+                });
+            }
+        });
+    </script>
+}
+
+@section ValidationScripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

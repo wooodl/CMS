@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航栏悬停功能测试</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .test-container {
+            padding: 20px;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+        
+        .test-header {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .test-instructions {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .test-instructions h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .test-instructions ol {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .test-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .feature-list {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feature-list h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .feature-icon {
+            color: #28a745;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .feature-text {
+            color: #666;
+        }
+        
+        .highlight {
+            background-color: #e7f3ff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #0066cc;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 style="color: #333; margin: 0;">导航栏悬停功能测试页面</h1>
+            <p style="color: #666; margin: 10px 0 0 0;">测试左侧导航栏收缩状态下的鼠标悬停显示子菜单功能</p>
+        </div>
+        
+        <div class="test-instructions">
+            <h3>测试步骤：</h3>
+            <ol>
+                <li>访问主应用程序：<a href="https://localhost:5000" target="_blank">https://localhost:5000</a></li>
+                <li>点击左上角的菜单按钮（三条横线图标）<span class="highlight">收缩</span>左侧导航栏</li>
+                <li>将鼠标悬停在有子菜单的图标上（如人员管理、飞机管理等）</li>
+                <li>观察子菜单是否在右侧正确显示</li>
+                <li>移动鼠标到子菜单上，确认子菜单保持显示</li>
+                <li>移开鼠标，确认子菜单正确隐藏</li>
+                <li>测试不同菜单项的悬停效果</li>
+            </ol>
+        </div>
+        
+        <div class="feature-list">
+            <h3>改进后的功能特性：</h3>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>平滑过渡动画：</strong>子菜单显示和隐藏有 <span class="highlight">opacity</span> 和 <span class="highlight">transform</span> 过渡效果</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>智能延迟控制：</strong>鼠标进入有 <span class="highlight">100ms</span> 延迟，避免快速移动时频繁显示</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>用户友好的隐藏延迟：</strong>鼠标离开后有 <span class="highlight">300ms</span> 延迟再隐藏，避免误操作</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>视觉指示器：</strong>子菜单左侧有三角形箭头指示器，清晰显示关联关系</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>美观的样式：</strong>子菜单有阴影、圆角和边框，视觉效果更佳</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>悬停高亮：</strong>菜单图标和子菜单项都有悬停高亮效果</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>完全隐藏下拉箭头：</strong>收缩状态下不显示任何下拉指示器</span>
+            </div>
+            
+            <div class="feature-item">
+                <span class="feature-icon">✓</span>
+                <span class="feature-text"><strong>状态记忆：</strong>页面刷新后记住导航栏的展开/收缩状态</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

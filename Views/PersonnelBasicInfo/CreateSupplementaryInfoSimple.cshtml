@@ -1,0 +1,81 @@
+@model ComprehensiveManagementSystem.Models.PersonnelSupplementaryInfo
+
+@{
+    ViewData["Title"] = "测试新增补充信息";
+}
+
+<h2>简化版新增补充信息 - 测试用</h2>
+
+<form asp-action="CreateSupplementaryInfo" method="post">
+    <input type="hidden" asp-for="PersonnelId" />
+    
+    <div>
+        <label>入党(团)时间:</label>
+        <input asp-for="PartyJoinDate" type="month" />
+    </div>
+    
+    <div>
+        <label>最近级别调整时间:</label>
+        <input asp-for="LastGradeAdjustmentDate" type="month" />
+    </div>
+    
+    <div>
+        <label>待遇级别:</label>
+        <input asp-for="TreatmentLevel" type="text" />
+    </div>
+    
+    <div>
+        <label>最近待遇调整时间:</label>
+        <input asp-for="LastTreatmentAdjustmentDate" type="month" />
+    </div>
+    
+    <div>
+        <label>加入部门时间:</label>
+        <input asp-for="DepartmentJoinDate" type="month" />
+    </div>
+    
+    <div>
+        <label>职级评定时间:</label>
+        <input asp-for="RankAssessmentDate" type="month" />
+    </div>
+    
+    <div>
+        <label>最近一次考核结果:</label>
+        <select asp-for="LastAssessmentResult">
+            <option value="">请选择考核结果</option>
+            <option value="优秀">优秀</option>
+            <option value="良好">良好</option>
+            <option value="合格">合格</option>
+            <option value="不合格">不合格</option>
+        </select>
+    </div>
+    
+    <div>
+        <label>近三年优秀次数:</label>
+        <input asp-for="ExcellentCount" type="number" min="0" />
+    </div>
+    
+    <div>
+        <label>家庭住址:</label>
+        <textarea asp-for="HomeAddress"></textarea>
+    </div>
+    
+    <div>
+        <label>单位地址:</label>
+        <textarea asp-for="WorkAddress"></textarea>
+    </div>
+    
+    <div>
+        <label>个人照片路径:</label>
+        <input asp-for="PhotoPath" type="text" />
+    </div>
+    
+    <div>
+        <button type="submit">保存</button>
+        <button type="button" onclick="history.back()">返回</button>
+    </div>
+</form>
+
+<script>
+    console.log('简化补充信息测试页面已加载');
+</script>

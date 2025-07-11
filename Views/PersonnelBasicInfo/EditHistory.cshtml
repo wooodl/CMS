@@ -1,0 +1,113 @@
+@model ComprehensiveManagementSystem.Models.PersonnelHistory
+
+@{
+    ViewData["Title"] = "编辑工作履历";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>编辑工作履历 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="EditHistory" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="PersonnelId" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开始时间 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="StartDate" type="date" class="layui-input" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">结束时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="EndDate" type="date" class="layui-input" />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">工作地点 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="WorkPlace" class="layui-input" placeholder="请输入工作地点" />
+                                    <span asp-validation-for="WorkPlace" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">担任角色/职务 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="Role" class="layui-input" placeholder="请输入担任的角色或职务" />
+                                    <span asp-validation-for="Role" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">工作内容描述</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="WorkDescription" class="layui-textarea" placeholder="请输入工作内容描述"></textarea>
+                            <span asp-validation-for="WorkDescription" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId, tab = 3 })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('工作履历编辑页面已加载');
+            
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('工作履历编辑表单提交事件被触发');
+                    return true;
+                });
+            }
+        });
+    </script>
+}
+
+@section ValidationScripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

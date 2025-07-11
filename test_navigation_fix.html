@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>导航栏修复测试</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css" />
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #393D49;
+        }
+        .layui-layout-admin .layui-side {
+            top: 60px;
+            width: 200px;
+            transition: width 0.3s ease;
+        }
+        .layui-layout-admin .layui-body {
+            top: 60px;
+            left: 200px;
+            transition: left 0.3s ease;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side {
+            width: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-body {
+            left: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a {
+            padding: 0;
+            text-align: center;
+            justify-content: center;
+            display: flex !important;
+            align-items: center;
+            width: 60px;
+            height: 42px;
+            line-height: 42px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a span {
+            display: none;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a i {
+            margin-right: 0;
+            font-size: 18px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-child {
+            display: none;
+        }
+        
+        /* 隐藏收缩状态下的所有展开箭头和下拉指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a:after {
+            display: none !important;
+        }
+        
+        /* 隐藏收缩状态下所有子菜单指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed:after {
+            display: none !important;
+        }
+        
+        /* 隐藏收缩状态下的layui自动添加的下拉箭头 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a .layui-nav-more {
+            display: none !important;
+        }
+        
+        /* 隐藏收缩状态下的所有下拉图标 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a .layui-icon-down {
+            display: none !important;
+        }
+        
+        /* 设置导航项为相对定位 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item {
+            position: relative;
+        }
+        
+        /* 收缩状态下子菜单的基础样式 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child {
+            position: absolute;
+            left: 60px;
+            top: 0;
+            z-index: 9999;
+            background-color: #2F4056;
+            border-radius: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 160px;
+            border: 1px solid #393D49;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        /* 显示子菜单的类 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child.show-submenu {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 子菜单项样式 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd {
+            line-height: 42px;
+            border-bottom: none;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd a {
+            padding: 0 20px;
+            color: #C2C2C2;
+            display: block;
+            text-decoration: none;
+            white-space: nowrap;
+            border-radius: 0;
+            transition: all 0.2s ease;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd a:hover {
+            background-color: #4E5465;
+            color: #fff;
+        }
+        
+        .menu-toggle {
+            color: #C2C2C2;
+            font-size: 16px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            height: 60px;
+            line-height: 60px;
+        }
+        
+        .menu-toggle:hover {
+            color: #fff;
+            background-color: #4E5465;
+        }
+        
+        .test-content {
+            padding: 20px;
+            background: #fff;
+            margin: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-nav layui-layout-left">
+                <a href="javascript:;" class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="layui-icon layui-icon-spread-left"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 左侧导航 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <span>人员管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">人员信息</a></dd>
+                            <dd><a href="javascript:;">简化人员</a></dd>
+                            <dd><a href="javascript:;">部门管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-util"></i>
+                            <span>飞机管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">飞机信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-component"></i>
+                            <span>装备管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">装备信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 内容主体 -->
+        <div class="layui-body">
+            <div class="test-content">
+                <h2>导航栏修复测试</h2>
+                <p>点击左上角的菜单按钮来收缩/展开导航栏</p>
+                <p><strong>修复内容：</strong></p>
+                <ul>
+                    <li>✅ 隐藏收缩状态下的下拉箭头</li>
+                    <li>✅ 鼠标悬停在菜单图标上显示子菜单</li>
+                    <li>✅ 子菜单显示动画效果</li>
+                    <li>✅ 子菜单样式优化</li>
+                </ul>
+                <p><strong>测试步骤：</strong></p>
+                <ol>
+                    <li>点击左上角菜单按钮收缩导航栏</li>
+                    <li>观察是否还有下拉箭头显示</li>
+                    <li>将鼠标悬停在有子菜单的图标上（如人员管理、飞机管理等）</li>
+                    <li>观察子菜单是否正确显示在右侧</li>
+                    <li>移动鼠标到子菜单上，确认子菜单保持显示</li>
+                    <li>移开鼠标，确认子菜单正确隐藏</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="wwwroot/lib/layui/layui.js"></script>
+    <script src="wwwroot/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            var layout = document.querySelector('.layui-layout-admin');
+            var icon = document.querySelector('.menu-toggle i');
+
+            if (layout.classList.contains('layui-layout-shrink')) {
+                layout.classList.remove('layui-layout-shrink');
+                icon.classList.remove('layui-icon-shrink-right');
+                icon.classList.add('layui-icon-spread-left');
+            } else {
+                layout.classList.add('layui-layout-shrink');
+                icon.classList.remove('layui-icon-spread-left');
+                icon.classList.add('layui-icon-shrink-right');
+            }
+
+            // 重新初始化悬停功能
+            setTimeout(function() {
+                enhanceShrinkHover();
+            }, 100);
+        }
+
+        // 增强收缩状态下的悬停功能
+        function enhanceShrinkHover() {
+            var $layout = $('.layui-layout-admin');
+            var $navItems = $('.layui-nav-tree .layui-nav-item');
+
+            // 为有子菜单的导航项添加悬停事件
+            $navItems.each(function() {
+                var $item = $(this);
+                var $child = $item.find('.layui-nav-child');
+
+                if ($child.length > 0) {
+                    var hoverTimer;
+
+                    // 移除之前可能绑定的事件
+                    $item.off('mouseenter.shrink mouseleave.shrink');
+                    $child.off('mouseenter.shrink mouseleave.shrink');
+
+                    $item.on('mouseenter.shrink', function() {
+                        if ($layout.hasClass('layui-layout-shrink')) {
+                            clearTimeout(hoverTimer);
+                            $child.addClass('show-submenu');
+                        }
+                    });
+
+                    $item.on('mouseleave.shrink', function() {
+                        if ($layout.hasClass('layui-layout-shrink')) {
+                            hoverTimer = setTimeout(function() {
+                                $child.removeClass('show-submenu');
+                            }, 150);
+                        }
+                    });
+
+                    // 鼠标进入子菜单时保持显示
+                    $child.on('mouseenter.shrink', function() {
+                        if ($layout.hasClass('layui-layout-shrink')) {
+                            clearTimeout(hoverTimer);
+                            $(this).addClass('show-submenu');
+                        }
+                    });
+
+                    // 鼠标离开子菜单时隐藏
+                    $child.on('mouseleave.shrink', function() {
+                        if ($layout.hasClass('layui-layout-shrink')) {
+                            var $self = $(this);
+                            hoverTimer = setTimeout(function() {
+                                $self.removeClass('show-submenu');
+                            }, 150);
+                        }
+                    });
+                }
+            });
+        }
+
+        layui.use('element', function(){
+            var element = layui.element;
+
+            // 页面加载完成后初始化悬停功能
+            $(document).ready(function() {
+                enhanceShrinkHover();
+            });
+        });
+    </script>
+</body>
+</html>

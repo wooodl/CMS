@@ -1,0 +1,126 @@
+@model ComprehensiveManagementSystem.Models.Organization
+
+@{
+    ViewData["Title"] = "编辑机构";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>编辑机构</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="Edit" method="post" class="layui-form">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" asp-for="Name">机构名称</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Name" class="layui-input" placeholder="请输入机构名称" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" asp-for="Type">机构类型</label>
+                        <div class="layui-input-block">
+                            <select asp-for="Type" class="layui-select">
+                                <option value="1">单位</option>
+                                <option value="2">部门</option>
+                                <option value="3">小组</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" asp-for="ParentId">父机构</label>
+                        <div class="layui-input-block">
+                            <select asp-for="ParentId" class="layui-select" asp-items="ViewBag.ParentId as SelectList">
+                                <option value="">-- 请选择父机构 --</option>
+                            </select>
+                            <span asp-validation-for="ParentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" asp-for="DisplayOrder">显示序号</label>
+                        <div class="layui-input-block">
+                            <input asp-for="DisplayOrder" class="layui-input" type="number" placeholder="请输入显示序号" />
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" asp-for="Location">地点</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Location" class="layui-input" placeholder="请输入地点" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label" asp-for="Remark">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remark" class="layui-textarea" placeholder="请输入备注"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i>
+                                保存
+                            </button>
+                            <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i>
+                                返回
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        layui.use(['form'], function(){
+            var form = layui.form;
+            
+            // 表单验证
+            form.verify({
+                name: function(value) {
+                    if(!value) {
+                        return '机构名称不能为空';
+                    }
+                    if(value.length > 100) {
+                        return '机构名称长度不能超过100个字符';
+                    }
+                },
+                displayOrder: function(value) {
+                    if(value && isNaN(value)) {
+                        return '显示序号必须是数字';
+                    }
+                },
+                location: function(value) {
+                    if(value && value.length > 200) {
+                        return '地点长度不能超过200个字符';
+                    }
+                },
+                remark: function(value) {
+                    if(value && value.length > 500) {
+                        return '备注长度不能超过500个字符';
+                    }
+                }
+            });
+        });
+    </script>
+}

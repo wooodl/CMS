@@ -1,0 +1,67 @@
+/* 修复 layui 图标字体文件缺失问题 */
+.layui-icon {
+    font-family: 'layui-icon', 'Font Awesome 5 Free', 'Font Awesome 5 Pro', 'FontAwesome', monospace !important;
+}
+
+/* 为常用图标提供备用显示 */
+.layui-icon-tree:before {
+    content: "📁";
+}
+
+.layui-icon-add-1:before {
+    content: "➕";
+}
+
+.layui-icon-delete:before {
+    content: "🗑️";
+}
+
+.layui-icon-edit:before {
+    content: "✏️";
+}
+
+.layui-icon-set:before {
+    content: "⚙️";
+}
+
+.layui-icon-about:before {
+    content: "ℹ️";
+}
+
+.layui-icon-home:before {
+    content: "🏠";
+}
+
+.layui-icon-user:before {
+    content: "👤";
+}
+
+.layui-icon-util:before {
+    content: "🔧";
+}
+
+.layui-icon-component:before {
+    content: "🔌";
+}
+
+.layui-icon-engine:before {
+    content: "⚙️";
+}
+
+.layui-icon-goods:before {
+    content: "📦";
+}
+
+.layui-icon-list:before {
+    content: "📋";
+}
+
+.layui-icon-chart:before {
+    content: "📊";
+}
+
+/* 如果仍然无法显示图标，使用文本替代 */
+.layui-icon-tree:before {
+    content: "tree" !important;
+    font-size: 10px;
+}

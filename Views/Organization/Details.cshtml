@@ -1,0 +1,179 @@
+@model ComprehensiveManagementSystem.Models.Organization
+
+@{
+    ViewData["Title"] = "机构详情";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <div class="layui-row">
+                    <div class="layui-col-md6">
+                        <h3>机构详情</h3>
+                    </div>
+                    <div class="layui-col-md6" style="text-align: right;">
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="layui-btn layui-btn-normal">
+                            <i class="layui-icon layui-icon-edit"></i>
+                            编辑
+                        </a>
+                        <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                            <i class="layui-icon layui-icon-return"></i>
+                            返回
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md8">
+                        <div class="layui-form">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">机构名称：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@Html.DisplayFor(model => model.Name)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">机构类型：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">
+                                        @switch (Model.Type)
+                                        {
+                                            case ComprehensiveManagementSystem.Models.OrganizationType.Unit:
+                                                <span class="layui-badge layui-bg-blue">单位</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.OrganizationType.Department:
+                                                <span class="layui-badge layui-bg-green">部门</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.OrganizationType.Group:
+                                                <span class="layui-badge layui-bg-orange">小组</span>
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">父机构：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">
+                                        @if (Model.Parent != null)
+                                        {
+                                            <a href="@Url.Action("Details", new { id = Model.Parent.Id })">@Model.Parent.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="layui-text">无</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">显示序号：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@Html.DisplayFor(model => model.DisplayOrder)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">地点：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@(Model.Location ?? "未设置")</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">备注：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@(Model.Remark ?? "无")</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">创建时间：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">更新时间：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-form-mid">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-col-md4">
+                        <div class="layui-card">
+                            <div class="layui-card-header">统计信息</div>
+                            <div class="layui-card-body">
+                                <div class="layui-row layui-col-space10">
+                                    <div class="layui-col-xs6">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 24px; font-weight: bold; color: #5FB878;">@Model.Children.Count</div>
+                                            <div style="font-size: 12px; color: #999;">子机构数量</div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-xs6">
+                                        <div style="text-align: center;">
+                                            <div style="font-size: 24px; font-weight: bold; color: #1E9FFF;">@Model.Personnel.Count</div>
+                                            <div style="font-size: 12px; color: #999;">人员数量</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                @if (Model.Children.Any())
+                {
+                    <div class="layui-card">
+                        <div class="layui-card-header">子机构</div>
+                        <div class="layui-card-body">
+                            <div class="layui-row layui-col-space15">
+                                @foreach (var child in Model.Children.OrderBy(c => c.DisplayOrder))
+                                {
+                                    <div class="layui-col-md4">
+                                        <div class="layui-card">
+                                            <div class="layui-card-header">
+                                                <a href="@Url.Action("Details", new { id = child.Id })">@child.Name</a>
+                                            </div>
+                                            <div class="layui-card-body">
+                                                <p>类型：@switch (child.Type)
+                                                {
+                                                    case ComprehensiveManagementSystem.Models.OrganizationType.Unit:
+                                                        <span class="layui-badge layui-bg-blue">单位</span>
+                                                        break;
+                                                    case ComprehensiveManagementSystem.Models.OrganizationType.Department:
+                                                        <span class="layui-badge layui-bg-green">部门</span>
+                                                        break;
+                                                    case ComprehensiveManagementSystem.Models.OrganizationType.Group:
+                                                        <span class="layui-badge layui-bg-orange">小组</span>
+                                                        break;
+                                                }</p>
+                                                @if (!string.IsNullOrEmpty(child.Location))
+                                                {
+                                                    <p>地点：@child.Location</p>
+                                                }
+                                                <p>
+                                                    <a href="@Url.Action("Details", new { id = child.Id })" class="layui-btn layui-btn-primary layui-btn-xs">查看</a>
+                                                    <a href="@Url.Action("Edit", new { id = child.Id })" class="layui-btn layui-btn-normal layui-btn-xs">编辑</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

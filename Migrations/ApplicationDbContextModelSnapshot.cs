@@ -896,6 +896,49 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.ToTable("Manufacturers");
                 });
 
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Organizations");
+                });
+
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.OutboundRecord", b =>
                 {
                     b.Property<long>("Id")
@@ -1012,6 +1055,9 @@ namespace ComprehensiveManagementSystem.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -1036,6 +1082,8 @@ namespace ComprehensiveManagementSystem.Migrations
 
                     b.HasIndex("EmployeeNumber")
                         .IsUnique();
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Personnel");
                 });
@@ -1127,9 +1175,6 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DepartmentJoinDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Duty")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1142,9 +1187,6 @@ namespace ComprehensiveManagementSystem.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ExcellentCount")
-                        .HasColumnType("int");
-
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
@@ -1155,10 +1197,6 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("HomeAddress")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<string>("IdCard")
                         .IsRequired()
                         .HasMaxLength(18)
@@ -1166,16 +1204,6 @@ namespace ComprehensiveManagementSystem.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("LastAssessmentResult")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("LastGradeAdjustmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastTreatmentAdjustmentDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("MaritalStatus")
                         .HasColumnType("int");
@@ -1185,12 +1213,13 @@ namespace ComprehensiveManagementSystem.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Nation")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("NativePlace")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("PartyJoinDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PersonnelCategory")
                         .HasMaxLength(50)
@@ -1200,10 +1229,6 @@ namespace ComprehensiveManagementSystem.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PhotoPath")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<string>("PoliticalStatus")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -1212,19 +1237,12 @@ namespace ComprehensiveManagementSystem.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("RankAssessmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TreatmentLevel")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("WorkAddress")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<string>("WorkId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("PersonnelId");
 
@@ -1510,6 +1528,150 @@ namespace ComprehensiveManagementSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("PersonnelSpouse");
+                });
+
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelSupplementaryInfo", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DepartmentJoinDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ExcellentCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HomeAddress")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastAssessmentResult")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("LastGradeAdjustmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("LastTreatmentAdjustmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("PartyJoinDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("PersonnelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PhotoPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("RankAssessmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("TreatmentLevel")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WorkAddress")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonnelId")
+                        .IsUnique();
+
+                    b.ToTable("PersonnelSupplementaryInfo");
+                });
+
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelTraining", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("CertificateName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CertificateNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("HasCertificate")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("PersonnelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("TrainingContent")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("TrainingDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrainingLocation")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TrainingName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TrainingOrganization")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("TrainingResult")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TrainingType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonnelId");
+
+                    b.ToTable("PersonnelTrainings");
                 });
 
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelWorkRecord", b =>
@@ -2078,13 +2240,29 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Navigation("Manufacturer");
                 });
 
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.Organization", b =>
+                {
+                    b.HasOne("ComprehensiveManagementSystem.Models.Organization", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.Personnel", b =>
                 {
                     b.HasOne("ComprehensiveManagementSystem.Models.Department", "Department")
                         .WithMany("Personnel")
                         .HasForeignKey("DepartmentId");
 
+                    b.HasOne("ComprehensiveManagementSystem.Models.Organization", "Organization")
+                        .WithMany("Personnel")
+                        .HasForeignKey("OrganizationId");
+
                     b.Navigation("Department");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelActivityRecord", b =>
@@ -2145,6 +2323,28 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.HasOne("ComprehensiveManagementSystem.Models.PersonnelBasicInfo", "Personnel")
                         .WithOne("Spouse")
                         .HasForeignKey("ComprehensiveManagementSystem.Models.PersonnelSpouse", "PersonnelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personnel");
+                });
+
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelSupplementaryInfo", b =>
+                {
+                    b.HasOne("ComprehensiveManagementSystem.Models.PersonnelBasicInfo", "Personnel")
+                        .WithOne("SupplementaryInfo")
+                        .HasForeignKey("ComprehensiveManagementSystem.Models.PersonnelSupplementaryInfo", "PersonnelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Personnel");
+                });
+
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelTraining", b =>
+                {
+                    b.HasOne("ComprehensiveManagementSystem.Models.PersonnelBasicInfo", "Personnel")
+                        .WithMany("Trainings")
+                        .HasForeignKey("PersonnelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2232,6 +2432,13 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Navigation("Personnel");
                 });
 
+            modelBuilder.Entity("ComprehensiveManagementSystem.Models.Organization", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Personnel");
+                });
+
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelBasicInfo", b =>
                 {
                     b.Navigation("ActivityRecords");
@@ -2243,6 +2450,10 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Navigation("RewardPunishments");
 
                     b.Navigation("Spouse");
+
+                    b.Navigation("SupplementaryInfo");
+
+                    b.Navigation("Trainings");
 
                     b.Navigation("WorkRecords");
                 });

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试删除功能</title>
+</head>
+<body>
+    <h1>测试人员删除功能</h1>
+    
+    <!-- 模拟删除表单 -->
+    <form action="http://localhost:5000/PersonnelBasicInfo/Delete" method="post">
+        <input type="hidden" name="id" value="00000000-0000-0000-0000-000000000001" />
+        <input type="hidden" name="__RequestVerificationToken" value="test" />
+        <button type="submit">测试删除</button>
+    </form>
+    
+    <script>
+        console.log('测试页面加载完成');
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+@model ComprehensiveManagementSystem.Models.PersonnelTraining
+
+@{
+    ViewData["Title"] = "测试编辑培训记录";
+}
+
+<h2>简化版编辑培训记录 - 测试用</h2>
+
+<form asp-action="EditTraining" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="PersonnelId" />
+    <input type="hidden" asp-for="CreatedAt" />
+    
+    <div>
+        <label>培训名称:</label>
+        <input asp-for="TrainingName" type="text" required />
+    </div>
+    
+    <div>
+        <label>培训机构:</label>
+        <input asp-for="TrainingOrganization" type="text" required />
+    </div>
+    
+    <div>
+        <label>培训地点:</label>
+        <input asp-for="TrainingLocation" type="text" required />
+    </div>
+    
+    <div>
+        <label>开始时间:</label>
+        <input asp-for="StartDate" type="date" required />
+    </div>
+    
+    <div>
+        <label>结束时间:</label>
+        <input asp-for="EndDate" type="date" required />
+    </div>
+    
+    <div>
+        <label>培训天数:</label>
+        <input asp-for="TrainingDays" type="number" value="1" />
+    </div>
+    
+    <div>
+        <label>培训结果:</label>
+        <input asp-for="TrainingResult" type="text" />
+    </div>
+    
+    <div>
+        <label>是否获得证书:</label>
+        <input asp-for="HasCertificate" type="checkbox" />
+    </div>
+    
+    <div>
+        <label>证书名称:</label>
+        <input asp-for="CertificateName" type="text" />
+    </div>
+    
+    <div>
+        <label>备注:</label>
+        <textarea asp-for="Remarks"></textarea>
+    </div>
+    
+    <div>
+        <button type="submit">保存</button>
+        <button type="button" onclick="location.href='@Url.Action("Details", new { id = Model.PersonnelId, tab = 4 })'">返回</button>
+    </div>
+</form>
+
+<script>
+    console.log('简化编辑测试页面已加载');
+</script>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>导航栏收缩测试</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css" />
+    <style>
+        .layui-layout-admin .layui-header {
+            background-color: #393D49;
+        }
+        .layui-layout-admin .layui-side {
+            top: 60px;
+        }
+        .layui-layout-admin .layui-body {
+            top: 60px;
+            left: 200px;
+            transition: left 0.3s ease;
+        }
+        
+        .layui-layout-admin .layui-side {
+            width: 200px;
+            transition: width 0.3s ease;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side {
+            width: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-body {
+            left: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a {
+            padding: 0;
+            text-align: center;
+            justify-content: center;
+            display: flex !important;
+            align-items: center;
+            width: 60px;
+            height: 42px;
+            line-height: 42px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a span {
+            display: none;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a i {
+            margin-right: 0;
+            font-size: 18px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-child {
+            display: none;
+        }
+        
+        /* 隐藏收缩状态下的所有展开箭头 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a:after {
+            display: none !important;
+        }
+        
+        /* 隐藏收缩状态下所有子菜单指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed:after {
+            display: none !important;
+        }
+        
+        /* 设置导航项为相对定位 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item {
+            position: relative;
+        }
+        
+        /* 收缩状态下鼠标悬停显示子菜单 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item:hover .layui-nav-child {
+            display: block !important;
+            position: absolute;
+            left: 60px;
+            top: 0;
+            z-index: 9999;
+            background-color: #2F4056;
+            border-radius: 2px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 160px;
+            border: 1px solid #393D49;
+        }
+        
+        /* 子菜单项样式 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item:hover .layui-nav-child dd {
+            line-height: 42px;
+            border-bottom: none;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item:hover .layui-nav-child dd a {
+            padding: 0 20px;
+            color: #C2C2C2;
+            display: block;
+            text-decoration: none;
+            white-space: nowrap;
+            border-radius: 0;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item:hover .layui-nav-child dd a:hover {
+            background-color: #4E5465;
+            color: #fff;
+        }
+        
+        .menu-toggle {
+            color: #C2C2C2;
+            font-size: 16px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            height: 60px;
+            line-height: 60px;
+        }
+        
+        .menu-toggle:hover {
+            color: #fff;
+            background-color: #4E5465;
+        }
+        
+        .test-button {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #1E9FFF;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-nav layui-layout-left">
+                <a href="javascript:;" class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="layui-icon layui-icon-spread-left"></i>
+                </a>
+            </div>
+            <h2 style="color: white; margin: 0; line-height: 60px; text-align: center;">导航栏收缩测试</h2>
+        </div>
+        
+        <!-- 左侧导航 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <span>人员管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">人员信息</a></dd>
+                            <dd><a href="javascript:;">简化人员</a></dd>
+                            <dd><a href="javascript:;">部门管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-util"></i>
+                            <span>飞机管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">飞机信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-component"></i>
+                            <span>装备管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">装备信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 内容主体 -->
+        <div class="layui-body">
+            <div style="padding: 20px;">
+                <h3>测试说明</h3>
+                <p>1. 点击左上角的菜单图标来收缩/展开导航栏</p>
+                <p>2. 当导航栏收缩时，下拉箭头应该隐藏</p>
+                <p>3. 当导航栏收缩时，鼠标悬停在有子菜单的图标上应该显示子菜单</p>
+                <button class="test-button" onclick="toggleSidebar()">切换导航栏</button>
+                <button class="test-button" onclick="location.reload()">重新加载</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="wwwroot/lib/layui/layui.js"></script>
+    <script>
+        function toggleSidebar() {
+            var layout = document.querySelector('.layui-layout-admin');
+            var icon = document.querySelector('.menu-toggle i');
+            
+            if (layout.classList.contains('layui-layout-shrink')) {
+                layout.classList.remove('layui-layout-shrink');
+                icon.classList.remove('layui-icon-shrink-right');
+                icon.classList.add('layui-icon-spread-left');
+            } else {
+                layout.classList.add('layui-layout-shrink');
+                icon.classList.remove('layui-icon-spread-left');
+                icon.classList.add('layui-icon-shrink-right');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+@model ComprehensiveManagementSystem.Models.Organization
+
+@{
+    ViewData["Title"] = "删除机构";
+}
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>删除机构</h3>
+            </div>
+            <div class="layui-card-body">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="layui-elem-quote layui-quote-nm layui-bg-red">
+                        <i class="layui-icon layui-icon-close"></i>
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+                
+                <div class="layui-elem-quote layui-quote-nm layui-bg-orange">
+                    <i class="layui-icon layui-icon-about"></i>
+                    确定要删除以下机构吗？此操作不可撤销。
+                </div>
+                
+                <div class="layui-form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">机构名称：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">@Html.DisplayFor(model => model.Name)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">机构类型：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">
+                                @switch (Model.Type)
+                                {
+                                    case ComprehensiveManagementSystem.Models.OrganizationType.Unit:
+                                        <span class="layui-badge layui-bg-blue">单位</span>
+                                        break;
+                                    case ComprehensiveManagementSystem.Models.OrganizationType.Department:
+                                        <span class="layui-badge layui-bg-green">部门</span>
+                                        break;
+                                    case ComprehensiveManagementSystem.Models.OrganizationType.Group:
+                                        <span class="layui-badge layui-bg-orange">小组</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">父机构：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">
+                                @if (Model.Parent != null)
+                                {
+                                    @Model.Parent.Name
+                                }
+                                else
+                                {
+                                    <span class="layui-text">无</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">显示序号：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">@Html.DisplayFor(model => model.DisplayOrder)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">地点：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">@(Model.Location ?? "未设置")</div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid">@(Model.Remark ?? "无")</div>
+                        </div>
+                    </div>
+                    
+                    @if (Model.Children.Any())
+                    {
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">子机构：</label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid">
+                                    <div class="layui-elem-quote layui-quote-nm layui-bg-red">
+                                        <i class="layui-icon layui-icon-close"></i>
+                                        该机构下有 @Model.Children.Count 个子机构，无法删除。请先删除子机构。
+                                    </div>
+                                    <ul>
+                                        @foreach (var child in Model.Children.OrderBy(c => c.DisplayOrder))
+                                        {
+                                            <li>@child.Name</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        @if (!Model.Children.Any())
+                        {
+                            <form asp-action="Delete" method="post" style="display: inline;">
+                                <input type="hidden" asp-for="Id" />
+                                <button type="submit" class="layui-btn layui-btn-danger">
+                                    <i class="layui-icon layui-icon-delete"></i>
+                                    确认删除
+                                </button>
+                            </form>
+                        }
+                        <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                            <i class="layui-icon layui-icon-return"></i>
+                            返回
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

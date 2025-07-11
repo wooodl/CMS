@@ -1,0 +1,238 @@
+@model ComprehensiveManagementSystem.Models.PersonnelSpouse
+
+@{
+    ViewData["Title"] = "编辑配偶信息";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>编辑配偶信息 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="EditSpouse" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="PersonnelId" />
+                    <input type="hidden" asp-for="CreatedAt" />
+                    
+                    <!-- 基本信息 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">配偶姓名 <span style="color: red;">*</span></label>
+                            <div class="layui-input-inline">
+                                <input asp-for="Name" class="layui-input" placeholder="请输入配偶姓名" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">出生年月 <span style="color: red;">*</span></label>
+                            <div class="layui-input-inline">
+                                <input asp-for="BirthDate" type="date" class="layui-input" />
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结婚时间</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="MarriageDate" type="date" class="layui-input" />
+                                <span asp-validation-for="MarriageDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">籍贯</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="NativePlace" class="layui-input" placeholder="请输入籍贯" />
+                                <span asp-validation-for="NativePlace" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">民族</label>
+                            <div class="layui-input-inline">
+                                <select asp-for="Nation" class="layui-input">
+                                    <option value="">请选择民族</option>
+                                    <option value="汉族">汉族</option>
+                                    <option value="蒙古族">蒙古族</option>
+                                    <option value="回族">回族</option>
+                                    <option value="藏族">藏族</option>
+                                    <option value="维吾尔族">维吾尔族</option>
+                                    <option value="苗族">苗族</option>
+                                    <option value="彝族">彝族</option>
+                                    <option value="壮族">壮族</option>
+                                    <option value="布依族">布依族</option>
+                                    <option value="朝鲜族">朝鲜族</option>
+                                    <option value="满族">满族</option>
+                                    <option value="侗族">侗族</option>
+                                    <option value="瑶族">瑶族</option>
+                                    <option value="白族">白族</option>
+                                    <option value="土家族">土家族</option>
+                                    <option value="哈尼族">哈尼族</option>
+                                    <option value="哈萨克族">哈萨克族</option>
+                                    <option value="傣族">傣族</option>
+                                    <option value="黎族">黎族</option>
+                                    <option value="傈僳族">傈僳族</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                                <span asp-validation-for="Nation" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">学历</label>
+                            <div class="layui-input-inline">
+                                <select asp-for="Education" class="layui-input">
+                                    <option value="">请选择学历</option>
+                                    <option value="小学">小学</option>
+                                    <option value="初中">初中</option>
+                                    <option value="高中">高中</option>
+                                    <option value="中专">中专</option>
+                                    <option value="大专">大专</option>
+                                    <option value="本科">本科</option>
+                                    <option value="硕士">硕士</option>
+                                    <option value="博士">博士</option>
+                                </select>
+                                <span asp-validation-for="Education" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">政治面貌</label>
+                            <div class="layui-input-inline">
+                                <select asp-for="PoliticalStatus" class="layui-input">
+                                    <option value="">请选择政治面貌</option>
+                                    <option value="群众">群众</option>
+                                    <option value="共青团员">共青团员</option>
+                                    <option value="中共党员">中共党员</option>
+                                    <option value="民主党派">民主党派</option>
+                                </select>
+                                <span asp-validation-for="PoliticalStatus" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">身份证号</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="IdCard" class="layui-input" placeholder="请输入身份证号" />
+                                <span asp-validation-for="IdCard" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">联系电话</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="Phone" class="layui-input" placeholder="请输入联系电话" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 工作信息 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">工作单位</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="WorkUnit" class="layui-input" placeholder="请输入工作单位" />
+                                <span asp-validation-for="WorkUnit" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">职务</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="Position" class="layui-input" placeholder="请输入职务" />
+                                <span asp-validation-for="Position" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">工作证号</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="WorkId" class="layui-input" placeholder="请输入工作证号" />
+                                <span asp-validation-for="WorkId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 特殊标识 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">是否同类型人员</label>
+                            <div class="layui-input-inline">
+                                <input type="checkbox" asp-for="IsSameType" lay-skin="switch" lay-text="是|否">
+                                <span asp-validation-for="IsSameType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">是否在本地</label>
+                            <div class="layui-input-inline">
+                                <input type="checkbox" asp-for="IsLocal" lay-skin="switch" lay-text="是|否">
+                                <span asp-validation-for="IsLocal" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">到本地时间</label>
+                            <div class="layui-input-inline">
+                                <input asp-for="LocalArrivalDate" type="date" class="layui-input" />
+                                <span asp-validation-for="LocalArrivalDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 地址信息 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">住址</label>
+                        <div class="layui-input-block">
+                            <input asp-for="Address" class="layui-input" placeholder="请输入住址" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+                            <span asp-validation-for="Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId, tab = 5 })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        layui.use(['form'], function(){
+            var form = layui.form;
+            
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('配偶信息编辑页面已加载');
+                
+                var formElement = document.querySelector('form');
+                if (formElement) {
+                    formElement.addEventListener('submit', function(e) {
+                        console.log('配偶信息编辑表单提交事件被触发');
+                        return true;
+                    });
+                }
+            });
+        });
+    </script>
+}
+
+@section ValidationScripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -4,7 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - 综合管理系统</title>
+    <link rel="icon" href="~/favicon.ico" type="image/svg+xml">
     <link rel="stylesheet" href="~/lib/layui/css/layui.css" />
+    <link rel="stylesheet" href="~/css/layui-fix.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <style>
         .layui-layout-admin .layui-header {
@@ -16,11 +18,272 @@
         .layui-layout-admin .layui-body {
             top: 60px;
             left: 200px;
+            transition: left 0.3s ease;
+        }
+        
+        .content-wrapper {
+            padding: 15px;
+        }
+        
+        .layui-layout-admin .layui-side {
+            width: 200px;
+            transition: width 0.3s ease;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side {
+            width: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-body {
+            left: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a {
+            padding: 0;
+            text-align: center;
+            justify-content: center;
+            display: flex !important;
+            align-items: center;
+            width: 60px;
+            height: 42px;
+            line-height: 42px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a span {
+            display: none;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a i {
+            margin-right: 0;
+            font-size: 18px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-child {
+            display: none;
+        }
+        
+        /* 隐藏收缩状态下的所有展开箭头和下拉指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a:after {
+            display: none !important;
+        }
+
+        /* 隐藏收缩状态下所有子菜单指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed:after {
+            display: none !important;
+        }
+
+        /* 隐藏收缩状态下的layui自动添加的下拉箭头 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a .layui-nav-more {
+            display: none !important;
+        }
+
+        /* 隐藏收缩状态下的所有下拉图标 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a .layui-icon-down {
+            display: none !important;
+        }
+
+        /* 设置导航项为相对定位 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item {
+            position: relative;
+        }
+
+        /* 收缩状态下的子菜单样式 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-child {
+            display: none !important;
+        }
+
+        /* 收缩状态下强制显示子菜单的类 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-child.show-submenu {
+            display: block !important;
+            position: fixed !important;
+            z-index: 99999 !important;
+            background-color: #2F4056 !important;
+            border-radius: 2px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            min-width: 160px !important;
+            border: 1px solid #393D49 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            transition: all 0.2s ease !important;
+            pointer-events: auto !important;
+        }
+
+        /* 修复收缩状态下子菜单项的颜色 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-child.show-submenu dd {
+            background-color: transparent !important;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-child.show-submenu dd a {
+            background-color: transparent !important;
+            color: #C2C2C2 !important;
+            padding: 10px 15px !important;
+            display: block !important;
+            border: none !important;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-child.show-submenu dd a:hover {
+            background-color: #4E5465 !important;
+            color: #fff !important;
+        }
+
+        /* 确保展开状态下子菜单正常显示 - 让layui自己处理 */
+        .layui-layout-admin:not(.layui-layout-shrink) .layui-nav-tree .layui-nav-child {
+            background-color: #393D49 !important; /* 恢复原来的背景色 */
+        }
+
+
+
+        /* 子菜单项样式 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd {
+            line-height: 42px;
+            border-bottom: none;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd a {
+            padding: 0 20px;
+            color: #C2C2C2;
+            display: block;
+            text-decoration: none;
+            white-space: nowrap;
+            border-radius: 0;
+            transition: all 0.2s ease;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd:first-child a {
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd:last-child a {
+            border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child dd a:hover {
+            background-color: #4E5465;
+            color: #fff;
+        }
+
+        /* 为子菜单添加箭头指示器 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 15px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #393D49;
+            z-index: 10000;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child::after {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 15px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #2F4056;
+            z-index: 10001;
+        }
+
+        /* 改善菜单项的悬停效果 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a:hover {
+            background-color: #4E5465 !important;
+            color: #fff !important;
+        }
+        
+        .menu-toggle {
+            color: #C2C2C2;
+            font-size: 16px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            height: 60px;
+            line-height: 60px;
+        }
+        
+        .menu-toggle i {
+            font-size: 20px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle:hover {
+            color: #fff;
+            background-color: #4E5465;
+        }
+        
+        .menu-toggle:hover i {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         .layui-logo {
             color: #fff;
             font-weight: bold;
             font-size: 18px;
+            float: left;
+            width: 200px;
+            padding: 0 15px;
+            transition: width 0.3s ease;
+            box-sizing: border-box;
+            height: 60px;
+            line-height: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 收缩状态下标题区域也要缩小，显示LOGO */
+        .layui-layout-admin.layui-layout-shrink .layui-logo {
+            width: 60px;
+            padding: 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        /* 收缩状态下隐藏标题文字 */
+        .layui-layout-admin.layui-layout-shrink .layui-logo .title-text {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        /* 收缩状态下显示LOGO图标，居中显示 */
+        .layui-layout-admin.layui-layout-shrink .layui-logo .logo-icon {
+            left: 14px;
+            top: 14px;
+        }
+        
+        /* 默认状态下显示LOGO图标，与标题水平对齐 */
+        .layui-logo .logo-icon {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .layui-logo .title-text {
+            position: absolute;
+            left: 59px;
+            top: 0;
+            line-height: 60px;
+            opacity: 1;
+            transition: opacity 0.3s ease, left 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
         }
         .content-wrapper {
             padding: 15px;
@@ -31,16 +294,27 @@
     <div class="layui-layout layui-layout-admin">
         <!-- 头部 -->
         <div class="layui-header">
-            <div class="layui-logo layui-hide-xs layui-bg-black">综合管理系统</div>
+            <!-- 标题区域 - 与导航栏同宽 -->
+            <div class="layui-logo layui-hide-xs layui-bg-black" style="position: relative;">
+                <img src="~/images/logo.svg" alt="系统LOGO" class="logo-icon">
+                <span class="title-text">综合管理系统</span>               
+            </div>
             
-            <!-- 头部区域（可配合layui 已有的水平导航） -->
-            <ul class="layui-nav layui-layout-left">
-                <!-- 移动端显示 -->
-                <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+            <div class="layui-nav layui-layout-left">
+                <!-- 触发器 -->
+                <a href="javascript:;" class="menu-toggle" lay-header-event="menuLeft">
                     <i class="layui-icon layui-icon-spread-left"></i>
-                </li>
-            </ul>
+                </a>
+                <ul>
+                    <!-- 移动端显示 -->
+                    <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+                        <i class="layui-icon layui-icon-spread-left"></i>
+                    </li>
+                </ul>
+            </div>
             
+            
+            <!-- 用户信息区域 -->
             <ul class="layui-nav layui-layout-right">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
@@ -79,14 +353,14 @@
                     <li class="layui-nav-item">
                         <a asp-controller="Home" asp-action="Index">
                             <i class="layui-icon layui-icon-home"></i>
-                            首页
+                            <span>首页</span>
                         </a>
                     </li>
                     
-                    <li class="layui-nav-item layui-nav-itemed">
-                        <a class="" href="javascript:;">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
                             <i class="layui-icon layui-icon-user"></i>
-                            人员管理
+                            <span>人员管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a asp-controller="PersonnelBasicInfo" asp-action="Index">人员信息</a></dd>
@@ -98,7 +372,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-util"></i>
-                            飞机管理
+                            <span>飞机管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">飞机信息</a></dd>
@@ -109,7 +383,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-component"></i>
-                            装备管理
+                            <span>装备管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">装备信息</a></dd>
@@ -120,7 +394,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-engine"></i>
-                            设备管理
+                            <span>设备管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">设备信息</a></dd>
@@ -131,7 +405,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-goods"></i>
-                            装具管理
+                            <span>装具管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">装具信息</a></dd>
@@ -142,7 +416,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-list"></i>
-                            库存管理
+                            <span>库存管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">入库管理</a></dd>
@@ -156,7 +430,7 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-chart"></i>
-                            统计报表
+                            <span>统计报表</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">库存统计</a></dd>
@@ -168,11 +442,12 @@
                     <li class="layui-nav-item">
                         <a href="javascript:;">
                             <i class="layui-icon layui-icon-set"></i>
-                            系统管理
+                            <span>系统管理</span>
                         </a>
                         <dl class="layui-nav-child">
                             <dd><a href="">用户管理</a></dd>
                             <dd><a href="">角色管理</a></dd>
+                            <dd><a asp-controller="Organization" asp-action="Index">机构管理</a></dd>
                             <dd><a href="">库房管理</a></dd>
                             <dd><a href="">厂家管理</a></dd>
                             <dd><a href="">计量单位</a></dd>
@@ -186,6 +461,7 @@
         <!-- 内容主体 -->
         <div class="layui-body">
             <div class="content-wrapper">
+
                 @RenderBody()
             </div>
         </div>
@@ -196,23 +472,349 @@
         </div>
     </div>
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/layui/layui.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("ValidationScripts", required: false)
     
     <script>
-        //JS 
+
+
+        // 强制清理所有子菜单样式
+        function forceCleanSubmenuStyles() {
+            $('.layui-nav-child').each(function() {
+                var $child = $(this);
+
+                // 移除所有可能的类
+                $child.removeClass('show-submenu debug-border debug-highlight');
+
+                // 清除容器样式
+                $child.removeAttr('style');
+
+                // 清除每个dd的样式
+                $child.find('dd').each(function() {
+                    $(this).removeClass('debug-child-border');
+                    $(this).removeAttr('style');
+                });
+
+                // 清除每个链接的样式
+                $child.find('dd a').each(function() {
+                    $(this).removeClass('debug-dd-border');
+                    $(this).removeAttr('style');
+                });
+            });
+        }
+
+
+
+        // 清理子菜单状态
+        function cleanupSubmenuState() {
+            forceCleanSubmenuStyles();
+        }
+
+
+
+        // 监听收缩状态变化
+        function onShrinkStateChange() {
+            var isShrink = $('.layui-layout-admin').hasClass('layui-layout-shrink');
+
+            if (!isShrink) {
+                // 展开状态：清理所有收缩状态的样式
+                console.log('切换到展开状态，清理收缩样式');
+                forceCleanSubmenuStyles();
+            }
+        }
+
+        // 增强收缩状态下的悬停功能 - 全局函数
+        function enhanceShrinkHover() {
+            // 清理之前的状态
+            cleanupSubmenuState();
+
+            // 移除所有之前的事件绑定
+            $('.layui-nav-tree .layui-nav-item').off('.shrink-hover');
+
+            // 全局变量用于快速切换
+            var currentActiveItem = null;
+
+            // 为每个有子菜单的导航项绑定悬停事件
+            $('.layui-nav-tree .layui-nav-item').each(function() {
+                var $item = $(this);
+                var $child = $item.find('.layui-nav-child');
+
+                if ($child.length > 0) {
+                    // 鼠标进入菜单项
+                    $item.on('mouseenter.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            var $currentItem = $(this);
+
+                            // 立即隐藏其他所有子菜单
+                            if (currentActiveItem && currentActiveItem[0] !== $currentItem[0]) {
+                                var $prevChild = currentActiveItem.find('.layui-nav-child');
+                                $prevChild.removeClass('show-submenu');
+                                clearTimeout(currentActiveItem.data('hideTimer'));
+                                clearTimeout(currentActiveItem.data('showTimer'));
+                            }
+
+                            // 清除当前项的定时器
+                            clearTimeout($currentItem.data('hideTimer'));
+                            clearTimeout($currentItem.data('showTimer'));
+
+                            // 计算精确的位置
+                            var $link = $currentItem.find('> a');
+                            var linkOffset = $link.offset();
+                            var sidebarWidth = $('.layui-side').outerWidth();
+
+                            // 子菜单应该与当前图标对齐，不需要偏移
+                            var correctedTop = linkOffset.top;
+
+                            // 设置子菜单位置
+                            $child.css({
+                                'position': 'fixed',
+                                'left': sidebarWidth + 'px',
+                                'top': correctedTop + 'px',
+                                'z-index': '99999'
+                            });
+
+                            // 立即显示当前子菜单，无延迟
+                            $child.addClass('show-submenu');
+
+                            // 更新当前活动项
+                            currentActiveItem = $currentItem;
+                        }
+                    });
+
+                    // 鼠标离开菜单项
+                    $item.on('mouseleave.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            var $currentItem = $(this);
+                            clearTimeout($currentItem.data('showTimer'));
+
+                            // 缩短隐藏延迟，提高响应速度
+                            var hideTimer = setTimeout(function() {
+                                // 只有当前项不是活动项时才隐藏
+                                if (currentActiveItem && currentActiveItem[0] === $currentItem[0]) {
+                                    currentActiveItem = null;
+                                }
+
+                                $child.removeClass('show-submenu');
+                                // 清除内联样式，避免影响展开状态
+                                $child.css({
+                                    'position': '',
+                                    'left': '',
+                                    'top': '',
+                                    'z-index': '',
+                                    'background-color': '',
+                                    'border': ''
+                                });
+
+                                // 清除子菜单项的样式
+                                $child.find('dd').css({
+                                    'background-color': '',
+                                    'border': ''
+                                });
+
+                                $child.find('dd a').css({
+                                    'background-color': '',
+                                    'border': '',
+                                    'color': ''
+                                });
+                            }, 150); // 减少延迟时间从300ms到150ms
+                            $currentItem.data('hideTimer', hideTimer);
+                        }
+                    });
+
+                    // 鼠标进入子菜单时保持显示
+                    $child.on('mouseenter.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            clearTimeout($item.data('hideTimer'));
+                            clearTimeout($item.data('showTimer'));
+                            $(this).addClass('show-submenu');
+                        }
+                    });
+
+                    // 鼠标离开子菜单时隐藏
+                    $child.on('mouseleave.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            var hideTimer = setTimeout(function() {
+                                $child.removeClass('show-submenu');
+                                // 清除内联样式
+                                $child.css({
+                                    'position': '',
+                                    'left': '',
+                                    'top': '',
+                                    'z-index': '',
+                                    'background-color': '',
+                                    'border': ''
+                                });
+
+                                // 清除子菜单项的样式
+                                $child.find('dd').css({
+                                    'background-color': '',
+                                    'border': ''
+                                });
+
+                                $child.find('dd a').css({
+                                    'background-color': '',
+                                    'border': '',
+                                    'color': ''
+                                });
+                            }, 300);
+                            $item.data('hideTimer', hideTimer);
+                        }
+                    });
+                }
+            });
+        }
+
+        //JS
         layui.use(['element', 'layer', 'util'], function(){
             var element = layui.element;
             var layer = layui.layer;
             var util = layui.util;
+
+            // 让layui处理导航功能
+            element.render('nav', 'test');
+
+
             
             //头部事件
             util.event('lay-header-event', {
                 //左侧菜单事件
                 menuLeft: function(othis){
-                    layer.msg('展开左侧菜单的操作', {icon: 0});
+                    var layout = $('.layui-layout-admin');
+                    var sideWidth = $('.layui-side').width();
+                    var icon = othis.find('i');
+                    
+                    if(sideWidth > 60){
+                        // 收缩侧边栏
+                        layout.addClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-spread-left').addClass('layui-icon-shrink-right');
+                        
+                        // 保存收缩状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'true');
+
+                        // 重新初始化悬停功能
+                        setTimeout(function() {
+                            enhanceShrinkHover();
+                        }, 100);
+                    } else {
+                        // 展开侧边栏
+                        layout.removeClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-shrink-right').addClass('layui-icon-spread-left');
+
+                        // 保存展开状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'false');
+
+                        // 清理收缩状态下的子菜单样式
+                        console.log('展开侧边栏，清理收缩样式');
+                        forceCleanSubmenuStyles();
+                    }
                 }
+            });
+            
+            // 页面加载时恢复侧边栏状态
+            $(document).ready(function(){
+                // 首先清理所有可能的残留样式
+                forceCleanSubmenuStyles();
+
+                // 确保所有子菜单默认收起（移除layui-nav-itemed类）
+                $('.layui-nav-item').removeClass('layui-nav-itemed');
+
+                var shrinkState = localStorage.getItem('sidebar-shrink');
+
+                // 默认状态为展开，只有明确设置为收缩时才收缩
+                if(shrinkState === 'true'){
+                    $('.layui-layout-admin').addClass('layui-layout-shrink');
+                    $('.menu-toggle i').removeClass('layui-icon-spread-left').addClass('layui-icon-shrink-right');
+                    // 初始化收缩状态的悬停功能
+                    setTimeout(function() {
+                        enhanceShrinkHover();
+                    }, 100);
+                } else {
+                    // 确保默认状态是展开的
+                    $('.layui-layout-admin').removeClass('layui-layout-shrink');
+                    $('.menu-toggle i').removeClass('layui-icon-shrink-right').addClass('layui-icon-spread-left');
+                    // 如果没有设置过状态，则设置为展开
+                    if(shrinkState === null) {
+                        localStorage.setItem('sidebar-shrink', 'false');
+                    }
+                }
+                
+                // 确保触发器事件绑定
+                $('.menu-toggle').on('click', function(e){
+                    e.preventDefault();
+                    var layout = $('.layui-layout-admin');
+                    var sideWidth = $('.layui-side').width();
+                    var icon = $(this).find('i');
+                    
+                    if(sideWidth > 60){
+                        // 收缩侧边栏
+                        layout.addClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-spread-left').addClass('layui-icon-shrink-right');
+                        
+                        // 保存收缩状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'true');
+
+                        // 重新初始化悬停功能
+                        setTimeout(function() {
+                            enhanceShrinkHover();
+                        }, 100);
+                    } else {
+                        // 展开侧边栏
+                        layout.removeClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-shrink-right').addClass('layui-icon-spread-left');
+
+                        // 保存展开状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'false');
+
+                        // 清理收缩状态下的子菜单样式
+                        console.log('展开侧边栏（主触发器），清理收缩样式');
+                        forceCleanSubmenuStyles();
+
+
+                    }
+                });
+                
+                // 同时绑定到所有可能的触发器
+                $('[lay-header-event="menuLeft"]').on('click', function(e){
+                    e.preventDefault();
+                    var layout = $('.layui-layout-admin');
+                    var sideWidth = $('.layui-side').width();
+                    var icon = $(this).find('i');
+                    
+                    if(sideWidth > 60){
+                        // 收缩侧边栏
+                        layout.addClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-spread-left').addClass('layui-icon-shrink-right');
+                        
+                        // 保存收缩状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'true');
+
+                        // 重新初始化悬停功能
+                        setTimeout(function() {
+                            enhanceShrinkHover();
+                        }, 100);
+                    } else {
+                        // 展开侧边栏
+                        layout.removeClass('layui-layout-shrink');
+                        icon.removeClass('layui-icon-shrink-right').addClass('layui-icon-spread-left');
+
+                        // 保存展开状态到localStorage
+                        localStorage.setItem('sidebar-shrink', 'false');
+
+                        // 清理收缩状态下的子菜单样式
+                        console.log('展开侧边栏（备用触发器），清理收缩样式');
+                        forceCleanSubmenuStyles();
+
+
+                    }
+                });
+
+                // 延迟初始化功能，确保layui完全加载
+                setTimeout(function() {
+                    enhanceShrinkHover();
+                }, 500);
             });
         });
     </script>

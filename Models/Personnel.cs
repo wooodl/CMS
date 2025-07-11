@@ -43,6 +43,10 @@ namespace ComprehensiveManagementSystem.Models
         public int? DepartmentId { get; set; }
         public virtual Department? Department { get; set; }
 
+        [Display(Name = "机构")]
+        public int? OrganizationId { get; set; }
+        public virtual Organization? Organization { get; set; }
+
         [Display(Name = "入职日期")]
         [DataType(DataType.Date)]
         public DateTime? HireDate { get; set; }

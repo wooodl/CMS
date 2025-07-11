@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航栏悬停功能增强测试页面</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        /* 调试信息面板 */
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 350px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            z-index: 100000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .debug-panel h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .debug-info {
+            margin: 5px 0;
+            color: #666;
+            font-size: 11px;
+        }
+        
+        .debug-buttons {
+            margin: 10px 0;
+        }
+        
+        .debug-buttons button {
+            margin: 2px;
+            padding: 5px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .btn-red { background: #FF4444; color: white; }
+        .btn-blue { background: #4444FF; color: white; }
+        .btn-green { background: #44AA44; color: white; }
+        .btn-orange { background: #FF8844; color: white; }
+        .btn-purple { background: #8844FF; color: white; }
+        .btn-teal { background: #44AAAA; color: white; }
+        
+        /* 收缩状态下强制覆盖layui的隐藏样式 */
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-child,
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child,
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed .layui-nav-child {
+            display: block !important;
+            position: absolute !important;
+            left: 60px !important;
+            top: 0 !important;
+            z-index: 99999 !important;
+            background-color: #2F4056 !important;
+            border-radius: 2px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            min-width: 160px !important;
+            border: 1px solid #393D49 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateX(-10px) !important;
+            transition: all 0.2s ease !important;
+            pointer-events: none !important;
+        }
+        
+        /* 确保链接元素有相对定位 */
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item > a {
+            position: relative !important;
+        }
+        
+        /* 显示子菜单的类 */
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-child.show-submenu,
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child.show-submenu,
+        body .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed .layui-nav-child.show-submenu {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            pointer-events: auto !important;
+        }
+        
+        /* 调试样式 */
+        .debug-highlight {
+            background-color: #FF0000 !important;
+            color: #FFFFFF !important;
+            border: 2px solid #00FF00 !important;
+        }
+        
+        /* 位置指示器 */
+        .position-indicator {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #FF0000;
+            border-radius: 50%;
+            z-index: 100000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 调试面板 -->
+    <div class="debug-panel">
+        <h4>🔧 导航栏悬停测试工具 - 增强版</h4>
+        
+        <div class="debug-info">
+            <div id="shrink-status">收缩状态: 未知</div>
+            <div id="hover-status">悬停状态: 无</div>
+            <div id="submenu-count">子菜单数量: 0</div>
+            <div id="position-info">位置信息: 无</div>
+            <div id="offset-info">当前偏移: -42px</div>
+        </div>
+        
+        <div class="debug-buttons">
+            <button class="btn-blue" onclick="toggleShrink()">切换收缩</button>
+            <button class="btn-red" onclick="forceShowSubmenu()">显示子菜单</button>
+            <button class="btn-green" onclick="hideAllSubmenu()">隐藏子菜单</button>
+            <button class="btn-orange" onclick="showPositionIndicators()">位置指示器</button>
+            <button class="btn-purple" onclick="testOffsets()">测试偏移量</button>
+            <button class="btn-teal" onclick="debugAllPositions()">调试位置</button>
+        </div>
+        
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+            <strong>偏移量测试：</strong><br>
+            <button onclick="setOffset(0)" style="margin: 1px; padding: 2px 5px; font-size: 10px;">0px</button>
+            <button onclick="setOffset(-21)" style="margin: 1px; padding: 2px 5px; font-size: 10px;">-21px</button>
+            <button onclick="setOffset(-42)" style="margin: 1px; padding: 2px 5px; font-size: 10px;">-42px</button>
+            <button onclick="setOffset(-63)" style="margin: 1px; padding: 2px 5px; font-size: 10px;">-63px</button>
+            <button onclick="setOffset(-84)" style="margin: 1px; padding: 2px 5px; font-size: 10px;">-84px</button>
+        </div>
+        
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+            <strong>测试步骤：</strong><br>
+            1. 点击"切换收缩"<br>
+            2. 点击"测试偏移量"<br>
+            3. 观察哪个偏移量正确<br>
+            4. 使用对应的偏移量按钮<br>
+            5. 测试鼠标悬停功能
+        </div>
+    </div>
+
+    <!-- 主布局 -->
+    <div class="layui-layout layui-layout-admin" id="layout">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">综合管理系统</div>
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="layui-icon layui-icon-spread-left" id="shrink-btn"></a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 左侧导航 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <span>人员管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">人员信息</a></dd>
+                            <dd><a href="javascript:;">简化人员</a></dd>
+                            <dd><a href="javascript:;">部门管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-util"></i>
+                            <span>飞机管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">飞机信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                            <dd><a href="javascript:;">飞行计划</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-component"></i>
+                            <span>装备管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">装备信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                            <dd><a href="javascript:;">库存管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-engine"></i>
+                            <span>设备管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">设备信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 内容主体 -->
+        <div class="layui-body">
+            <div style="padding: 20px; background-color: #f5f5f5; min-height: 100vh;">
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2>导航栏悬停功能增强测试</h2>
+                    <p>这是一个专门用于测试和调试左侧导航栏收缩状态下鼠标悬停显示子菜单功能的页面。</p>
+                    
+                    <h3>新增功能：</h3>
+                    <ul>
+                        <li><strong>偏移量测试</strong>：可以测试不同的偏移量，找到最佳位置</li>
+                        <li><strong>位置调试</strong>：详细输出所有菜单项的位置信息</li>
+                        <li><strong>实时调整</strong>：可以实时调整偏移量并查看效果</li>
+                        <li><strong>多种测试模式</strong>：支持多种测试和调试方式</li>
+                    </ul>
+                    
+                    <h3>使用方法：</h3>
+                    <ol>
+                        <li>点击右上角调试面板中的"切换收缩"按钮</li>
+                        <li>点击"测试偏移量"按钮，观察所有子菜单的显示效果</li>
+                        <li>找到位置正确的子菜单，记住对应的偏移量</li>
+                        <li>点击对应的偏移量按钮（如-42px）</li>
+                        <li>测试鼠标悬停功能是否正常</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wwwroot/lib/jquery/dist/jquery.min.js"></script>
+    <script src="wwwroot/lib/layui/layui.js"></script>
+    
+    <script>
+        // 全局变量
+        var currentOffset = -42; // 默认偏移量
+        
+        // 调试函数
+        function updateDebugInfo() {
+            var $layout = $('#layout');
+            var isShrink = $layout.hasClass('layui-layout-shrink');
+            var submenuCount = $('.layui-nav-child').length;
+            
+            $('#shrink-status').text('收缩状态: ' + (isShrink ? '是' : '否'));
+            $('#submenu-count').text('子菜单数量: ' + submenuCount);
+            $('#offset-info').text('当前偏移: ' + currentOffset + 'px');
+        }
+        
+        function toggleShrink() {
+            var $layout = $('#layout');
+            $layout.toggleClass('layui-layout-shrink');
+            updateDebugInfo();
+            enhanceShrinkHover();
+            console.log('切换收缩状态');
+        }
+        
+        function setOffset(offset) {
+            currentOffset = offset;
+            updateDebugInfo();
+            console.log('设置偏移量为:', offset + 'px');
+            
+            // 如果当前有显示的子菜单，重新应用偏移
+            $('.layui-nav-child.show-submenu').each(function() {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+                
+                $child.css({
+                    'position': 'fixed',
+                    'left': sidebarWidth + 'px',
+                    'top': (linkOffset.top + offset) + 'px'
+                });
+            });
+        }
+        
+        function forceShowSubmenu() {
+            console.log('强制显示所有子菜单，使用偏移量:', currentOffset + 'px');
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+                
+                $child.addClass('show-submenu');
+                $child.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': (linkOffset.top + currentOffset) + 'px',
+                    'left': sidebarWidth + 'px',
+                    'background-color': '#FF0000',
+                    'color': '#FFFFFF',
+                    'z-index': '999999',
+                    'min-width': '160px',
+                    'border': '3px solid #00FF00'
+                });
+                
+                console.log('子菜单 ' + index + ':', {
+                    menuText: $item.find('span').text(),
+                    linkOffset: linkOffset,
+                    appliedOffset: currentOffset,
+                    finalTop: (linkOffset.top + currentOffset),
+                    finalLeft: sidebarWidth
+                });
+            });
+            
+            $('#position-info').text('位置信息: 已显示，偏移 ' + currentOffset + 'px');
+        }
+        
+        function testOffsets() {
+            console.log('=== 测试所有偏移量 ===');
+            var offsets = [0, -21, -42, -63, -84];
+            
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+                
+                var testOffset = offsets[index % offsets.length];
+                
+                $child.addClass('show-submenu');
+                $child.css({
+                    'display': 'block',
+                    'position': 'fixed',
+                    'top': (linkOffset.top + testOffset) + 'px',
+                    'left': sidebarWidth + 'px',
+                    'background-color': '#FF' + (index * 40).toString(16).padStart(2, '0') + '00',
+                    'color': '#FFFFFF',
+                    'z-index': '999999',
+                    'min-width': '160px',
+                    'border': '2px solid #000'
+                });
+                
+                // 添加偏移量标签
+                $child.prepend('<div style="background: #000; color: #fff; padding: 2px 5px; font-size: 10px;">偏移: ' + testOffset + 'px</div>');
+                
+                console.log('子菜单 ' + index + ' (偏移 ' + testOffset + 'px):', {
+                    menuText: $item.find('span').text(),
+                    originalTop: linkOffset.top,
+                    adjustedTop: linkOffset.top + testOffset
+                });
+            });
+            
+            $('#position-info').text('位置信息: 测试多种偏移量');
+        }
+        
+        function debugAllPositions() {
+            console.log('=== 所有菜单项位置调试 ===');
+            $('.layui-nav-item').each(function(index) {
+                var $item = $(this);
+                var $link = $item.find('> a');
+                var $span = $item.find('span');
+                var hasSubmenu = $item.find('.layui-nav-child').length > 0;
+                
+                if ($span.length > 0) {
+                    console.log('菜单项 ' + index + ':', {
+                        text: $span.text(),
+                        hasSubmenu: hasSubmenu,
+                        itemOffset: $item.offset(),
+                        linkOffset: $link.offset(),
+                        itemHeight: $item.outerHeight(),
+                        linkHeight: $link.outerHeight()
+                    });
+                }
+            });
+            
+            $('#position-info').text('位置信息: 已输出到控制台');
+        }
+        
+        function hideAllSubmenu() {
+            $('.layui-nav-child').removeClass('show-submenu debug-highlight');
+            $('.position-indicator').remove();
+            $('.layui-nav-child div').remove(); // 移除偏移量标签
+            $('#hover-status').text('悬停状态: 无');
+            $('#position-info').text('位置信息: 无');
+            console.log('隐藏所有子菜单');
+        }
+        
+        function showPositionIndicators() {
+            $('.position-indicator').remove();
+            
+            $('.layui-nav-item').each(function(index) {
+                var $item = $(this);
+                var $link = $item.find('> a');
+                var offset = $link.offset();
+                
+                if (offset) {
+                    var $indicator = $('<div class="position-indicator"></div>');
+                    $indicator.css({
+                        'left': offset.left + 'px',
+                        'top': offset.top + 'px'
+                    });
+                    $('body').append($indicator);
+                    
+                    console.log('菜单项 ' + index + ' 位置:', offset);
+                }
+            });
+            
+            $('#position-info').text('位置信息: 红点显示菜单项位置');
+        }
+        
+        // 增强收缩状态下的悬停功能
+        function enhanceShrinkHover() {
+            $('.layui-nav-tree .layui-nav-item').off('.shrink-hover');
+
+            $('.layui-nav-tree .layui-nav-item').each(function() {
+                var $item = $(this);
+                var $child = $item.find('.layui-nav-child');
+
+                if ($child.length > 0) {
+                    $item.on('mouseenter.shrink-hover', function() {
+                        $('#hover-status').text('悬停状态: 进入 ' + $(this).find('span').text());
+                        
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            clearTimeout($item.data('hideTimer'));
+                            clearTimeout($item.data('showTimer'));
+                            
+                            var $link = $item.find('> a');
+                            var linkOffset = $link.offset();
+                            var sidebarWidth = $('.layui-side').outerWidth();
+                            
+                            $child.css({
+                                'position': 'fixed',
+                                'left': sidebarWidth + 'px',
+                                'top': (linkOffset.top + currentOffset) + 'px',
+                                'z-index': '99999'
+                            });
+                            
+                            var showTimer = setTimeout(function() {
+                                $child.addClass('show-submenu');
+                            }, 100);
+                            $item.data('showTimer', showTimer);
+                        }
+                    });
+
+                    $item.on('mouseleave.shrink-hover', function() {
+                        $('#hover-status').text('悬停状态: 离开 ' + $(this).find('span').text());
+                        
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            clearTimeout($item.data('showTimer'));
+                            
+                            var hideTimer = setTimeout(function() {
+                                $child.removeClass('show-submenu');
+                                $('#hover-status').text('悬停状态: 无');
+                            }, 300);
+                            $item.data('hideTimer', hideTimer);
+                        }
+                    });
+
+                    $child.on('mouseenter.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            clearTimeout($item.data('hideTimer'));
+                            clearTimeout($item.data('showTimer'));
+                            $(this).addClass('show-submenu');
+                        }
+                    });
+
+                    $child.on('mouseleave.shrink-hover', function() {
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            var hideTimer = setTimeout(function() {
+                                $child.removeClass('show-submenu');
+                                $('#hover-status').text('悬停状态: 无');
+                            }, 300);
+                            $item.data('hideTimer', hideTimer);
+                        }
+                    });
+                }
+            });
+        }
+
+        // 初始化
+        layui.use('element', function(){
+            var element = layui.element;
+            
+            $(document).ready(function() {
+                updateDebugInfo();
+                enhanceShrinkHover();
+                
+                // 绑定收缩按钮
+                $('#shrink-btn').click(function() {
+                    toggleShrink();
+                });
+                
+                console.log('增强测试页面初始化完成');
+            });
+        });
+    </script>
+</body>
+</html>

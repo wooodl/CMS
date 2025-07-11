@@ -17,12 +17,14 @@ namespace ComprehensiveManagementSystem.Data
         
         // 人员详细信息管理
         public DbSet<PersonnelBasicInfo> PersonnelBasicInfos { get; set; }
+        public DbSet<PersonnelSupplementaryInfo> PersonnelSupplementaryInfos { get; set; }
         public DbSet<PersonnelRewardPunishment> PersonnelRewardPunishments { get; set; }
         public DbSet<PersonnelHistory> PersonnelHistories { get; set; }
         public DbSet<PersonnelSpouse> PersonnelSpouses { get; set; }
         public DbSet<PersonnelFamilyMember> PersonnelFamilyMembers { get; set; }
         public DbSet<PersonnelWorkRecord> PersonnelWorkRecords { get; set; }
         public DbSet<PersonnelActivityRecord> PersonnelActivityRecords { get; set; }
+        public DbSet<PersonnelTraining> PersonnelTrainings { get; set; }
 
         // 飞机管理
         public DbSet<Aircraft> Aircraft { get; set; }
@@ -53,6 +55,9 @@ namespace ComprehensiveManagementSystem.Data
         // 类别设置
         public DbSet<Category> Categories { get; set; }
 
+        // 机构管理
+        public DbSet<Organization> Organizations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -65,6 +70,7 @@ namespace ComprehensiveManagementSystem.Data
             ConfigureAircraft(builder);
             ConfigureDevice(builder);
             ConfigureKit(builder);
+            ConfigureOrganization(builder);
         }
 
         private void ConfigurePersonnel(ModelBuilder builder)
@@ -216,6 +222,17 @@ namespace ComprehensiveManagementSystem.Data
                       .HasForeignKey(e => e.DepartmentId);
             });
 
+            // 配置人员补充信息表
+            builder.Entity<PersonnelSupplementaryInfo>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                
+                entity.HasOne(e => e.Personnel)
+                      .WithOne(p => p.SupplementaryInfo)
+                      .HasForeignKey<PersonnelSupplementaryInfo>(e => e.PersonnelId);
+            });
+
             // 配置人员奖惩表
             builder.Entity<PersonnelRewardPunishment>(entity =>
             {
@@ -292,6 +309,43 @@ namespace ComprehensiveManagementSystem.Data
                 entity.HasOne(e => e.Personnel)
                       .WithMany(p => p.ActivityRecords)
                       .HasForeignKey(e => e.PersonnelId);
+            });
+
+            // 配置培训记录表
+            builder.Entity<PersonnelTraining>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd(); // 恢复自动生成
+                entity.Property(e => e.TrainingName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.TrainingOrganization).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.TrainingLocation).IsRequired().HasMaxLength(200);
+                
+                entity.HasOne(e => e.Personnel)
+                      .WithMany(p => p.Trainings)
+                      .HasForeignKey(e => e.PersonnelId);
+            });
+        }
+
+        private void ConfigureOrganization(ModelBuilder builder)
+        {
+            builder.Entity<Organization>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Type).IsRequired();
+                entity.Property(e => e.Location).HasMaxLength(200);
+                entity.Property(e => e.Remark).HasMaxLength(500);
+                
+                // 配置自引用关系
+                entity.HasOne(e => e.Parent)
+                      .WithMany(e => e.Children)
+                      .HasForeignKey(e => e.ParentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                
+                // 配置与人员的关系
+                entity.HasMany(e => e.Personnel)
+                      .WithOne(p => p.Organization)
+                      .HasForeignKey(p => p.OrganizationId);
             });
         }
     }

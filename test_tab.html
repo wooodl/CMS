@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tab Test</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css">
+</head>
+<body>
+<div class="layui-tab layui-tab-brief" lay-filter="personnelTab">
+    <ul class="layui-tab-title">
+        <li class="layui-this" lay-id="0">基本信息</li>
+        <li lay-id="1">补充信息</li>
+        <li lay-id="2">奖惩记录</li>
+        <li lay-id="3">工作履历</li>
+        <li lay-id="4">培训情况</li>
+        <li lay-id="5">配偶信息</li>
+        <li lay-id="6">家庭成员</li>
+        <li lay-id="7">工作记录</li>
+        <li lay-id="8">活动记录</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">基本信息内容</div>
+        <div class="layui-tab-item">补充信息内容</div>
+        <div class="layui-tab-item">奖惩记录内容</div>
+        <div class="layui-tab-item">工作履历内容</div>
+        <div class="layui-tab-item">培训情况内容</div>
+        <div class="layui-tab-item">配偶信息内容</div>
+        <div class="layui-tab-item">家庭成员内容</div>
+        <div class="layui-tab-item">工作记录内容</div>
+        <div class="layui-tab-item">活动记录内容</div>
+    </div>
+</div>
+
+<script src="wwwroot/lib/layui/layui.js"></script>
+<script>
+layui.use(['element'], function(){
+    var element = layui.element;
+    
+    setTimeout(function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var tabIndex = urlParams.get('tab');
+        console.log('当前URL参数 tab:', tabIndex);
+        
+        if (tabIndex !== null && tabIndex !== '') {
+            var tabNumber = parseInt(tabIndex);
+            console.log('解析的tab索引:', tabNumber);
+            
+            if (tabNumber >= 0 && tabNumber <= 8) {
+                console.log('切换到tab:', tabNumber.toString());
+                element.tabChange('personnelTab', tabNumber.toString());
+            } else {
+                console.log('tab索引超出范围');
+            }
+        } else {
+            console.log('没有找到tab参数');
+        }
+    }, 100);
+});
+</script>
+</body>
+</html>

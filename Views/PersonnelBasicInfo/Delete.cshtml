@@ -46,6 +46,14 @@
                                         <td><strong>学历</strong></td>
                                         <td>@(Model.Education ?? "-")</td>
                                     </tr>
+                                    <tr>
+                                        <td><strong>民族</strong></td>
+                                        <td>@(Model.Nation ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>政治面貌</strong></td>
+                                        <td>@(Model.PoliticalStatus ?? "-")</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -69,6 +77,22 @@
                                         <td>@(Model.Duty ?? "-")</td>
                                     </tr>
                                     <tr>
+                                        <td><strong>职务等级</strong></td>
+                                        <td>@(Model.DutyLevel ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>人员类别</strong></td>
+                                        <td>@(Model.PersonnelCategory ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>级别</strong></td>
+                                        <td>@(Model.Grade ?? "-")</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>工作证号</strong></td>
+                                        <td>@(Model.WorkId ?? "-")</td>
+                                    </tr>
+                                    <tr>
                                         <td><strong>联系电话</strong></td>
                                         <td>@(Model.Phone ?? "-")</td>
                                     </tr>
@@ -82,8 +106,8 @@
                     </div>
                 </div>
 
-                <form asp-action="Delete" method="post" class="layui-form">
-                    <input type="hidden" asp-for="PersonnelId" />
+                <form asp-action="Delete" asp-route-id="@Model.PersonnelId" method="post" class="layui-form">
+                    @Html.AntiForgeryToken()
                     <div class="layui-form-item">
                         <div class="layui-input-block">
                             <button type="submit" class="layui-btn layui-btn-danger" lay-submit="" lay-filter="delete">
@@ -116,12 +140,14 @@
                     title: '删除确认',
                     btn: ['确定删除', '取消']
                 }, function(index){
-                    // 用户确认删除，继续提交表单
+                    // 用户确认删除，直接提交表单
                     layer.close(index);
-                    return true;
+                    // 显示加载中提示
+                    layer.load(2, {shade: [0.3, '#000']});
+                    // 提交表单
+                    data.form.submit();
                 }, function(){
-                    // 用户取消删除
-                    return false;
+                    // 用户取消删除，什么都不做
                 });
                 return false; // 阻止默认提交，等待用户确认
             });

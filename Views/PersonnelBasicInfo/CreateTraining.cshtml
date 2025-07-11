@@ -1,0 +1,169 @@
+@model ComprehensiveManagementSystem.Models.PersonnelTraining
+
+@{
+    ViewData["Title"] = "添加培训记录";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>添加培训记录 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="CreateTraining" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <input type="hidden" asp-for="PersonnelId" />
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">培训名称 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="TrainingName" class="layui-input" placeholder="请输入培训名称" />
+                                    <span asp-validation-for="TrainingName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">培训机构 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="TrainingOrganization" class="layui-input" placeholder="请输入培训机构" />
+                                    <span asp-validation-for="TrainingOrganization" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">培训地点 <span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input asp-for="TrainingLocation" class="layui-input" placeholder="请输入培训地点" />
+                            <span asp-validation-for="TrainingLocation" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">开始时间 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="StartDate" id="startDate" type="date" class="layui-input" onchange="calculateDays()" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">结束时间 <span style="color: red;">*</span></label>
+                                <div class="layui-input-block">
+                                    <input asp-for="EndDate" id="endDate" type="date" class="layui-input" onchange="calculateDays()" />
+                                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">培训天数</label>
+                        <div class="layui-input-block">
+                            <input asp-for="TrainingDays" id="trainingDays" class="layui-input" readonly placeholder="将根据开始和结束时间自动计算" />
+                            <span asp-validation-for="TrainingDays" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-row layui-col-space20">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">培训结果</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="TrainingResult" class="layui-input" placeholder="请输入培训结果" />
+                                    <span asp-validation-for="TrainingResult" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">是否获得证书</label>
+                                <div class="layui-input-block">
+                                    <input type="checkbox" asp-for="HasCertificate" lay-skin="switch" lay-text="是|否" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">证书名称</label>
+                        <div class="layui-input-block">
+                            <input asp-for="CertificateName" class="layui-input" placeholder="如有证书请输入证书名称" />
+                            <span asp-validation-for="CertificateName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remarks" placeholder="请输入备注信息" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn">保存</button>
+                            <button type="button" class="layui-btn layui-btn-primary" onclick="goBack()">返回</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 计算培训天数
+        function calculateDays() {
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                var start = new Date(startDate);
+                var end = new Date(endDate);
+                
+                if (end >= start) {
+                    var timeDiff = end.getTime() - start.getTime();
+                    var dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 包含开始日和结束日
+                    document.getElementById('trainingDays').value = dayDiff;
+                } else {
+                    alert('结束时间不能早于开始时间');
+                    document.getElementById('endDate').value = '';
+                    document.getElementById('trainingDays').value = '';
+                }
+            } else {
+                document.getElementById('trainingDays').value = '';
+            }
+        }
+        
+        // 返回功能
+        function goBack() {
+            location.href = '@Url.Action("Details", new { id = Model.PersonnelId, tab = 4 })';
+        }
+        
+        // 简化的表单提交处理 - 暂时移除所有验证
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('表单提交事件被触发 - 无验证版本');
+                    console.log('表单action:', form.action);
+                    console.log('表单method:', form.method);
+                    
+                    // 暂时移除所有验证，让表单直接提交
+                    return true;
+                });
+            }
+        });
+    </script>
+}

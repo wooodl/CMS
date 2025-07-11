@@ -1,0 +1,197 @@
+@model ComprehensiveManagementSystem.Models.PersonnelSupplementaryInfo
+
+@{
+    ViewData["Title"] = "新增补充信息";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>新增补充信息 - @ViewData["PersonnelName"]</h3>
+            </div>
+            <div class="layui-card-body">
+                <form asp-action="CreateSupplementaryInfo" method="post">
+                    <div asp-validation-summary="ModelOnly" class="layui-alert layui-alert-danger" style="display: none;"></div>
+                    
+                    <input type="hidden" asp-for="PersonnelId" />
+                    
+                    <!-- 时间信息 -->
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>时间信息</legend>
+                    </fieldset>
+                    
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="PartyJoinDate" class="layui-form-label">入党(团)时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="PartyJoinDate" type="month" class="layui-input" placeholder="请选择入党(团)时间">
+                                    <span asp-validation-for="PartyJoinDate" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="LastGradeAdjustmentDate" class="layui-form-label">最近级别调整时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="LastGradeAdjustmentDate" type="month" class="layui-input" placeholder="请选择级别调整时间">
+                                    <span asp-validation-for="LastGradeAdjustmentDate" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="LastTreatmentAdjustmentDate" class="layui-form-label">最近待遇调整时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="LastTreatmentAdjustmentDate" type="month" class="layui-input" placeholder="请选择待遇调整时间">
+                                    <span asp-validation-for="LastTreatmentAdjustmentDate" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="DepartmentJoinDate" class="layui-form-label">加入部门时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="DepartmentJoinDate" type="month" class="layui-input" placeholder="请选择加入部门时间">
+                                    <span asp-validation-for="DepartmentJoinDate" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="RankAssessmentDate" class="layui-form-label">职级评定时间</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="RankAssessmentDate" type="month" class="layui-input" placeholder="请选择职级评定时间">
+                                    <span asp-validation-for="RankAssessmentDate" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="TreatmentLevel" class="layui-form-label">待遇级别</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="TreatmentLevel" class="layui-input" placeholder="请输入待遇级别">
+                                    <span asp-validation-for="TreatmentLevel" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 考核信息 -->
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>考核信息</legend>
+                    </fieldset>
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="LastAssessmentResult" class="layui-form-label">最近一次考核结果</label>
+                                <div class="layui-input-block">
+                                    <select asp-for="LastAssessmentResult" class="layui-input">
+                                        <option value="">请选择考核结果</option>
+                                        <option value="优秀">优秀</option>
+                                        <option value="良好">良好</option>
+                                        <option value="合格">合格</option>
+                                        <option value="不合格">不合格</option>
+                                    </select>
+                                    <span asp-validation-for="LastAssessmentResult" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="ExcellentCount" class="layui-form-label">近三年优秀次数</label>
+                                <div class="layui-input-block">
+                                    <input asp-for="ExcellentCount" type="number" min="0" class="layui-input" placeholder="请输入优秀次数">
+                                    <span asp-validation-for="ExcellentCount" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 地址信息 -->
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>地址信息</legend>
+                    </fieldset>
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="HomeAddress" class="layui-form-label">家庭住址</label>
+                                <div class="layui-input-block">
+                                    <textarea asp-for="HomeAddress" class="layui-textarea" placeholder="请输入家庭住址"></textarea>
+                                    <span asp-validation-for="HomeAddress" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label asp-for="WorkAddress" class="layui-form-label">单位地址</label>
+                                <div class="layui-input-block">
+                                    <textarea asp-for="WorkAddress" class="layui-textarea" placeholder="请输入单位地址"></textarea>
+                                    <span asp-validation-for="WorkAddress" class="layui-text layui-text-red"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 其他信息 -->
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>其他信息</legend>
+                    </fieldset>
+
+                    <div class="layui-form-item">
+                        <label asp-for="PhotoPath" class="layui-form-label">个人照片路径</label>
+                        <div class="layui-input-block">
+                            <input asp-for="PhotoPath" class="layui-input" placeholder="请输入照片路径或上传照片">
+                            <span asp-validation-for="PhotoPath" class="layui-text layui-text-red"></span>
+                        </div>
+                    </div>
+
+                    <!-- 提交按钮 -->
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.PersonnelId, tab = 1 })" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回详情
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('补充信息页面已加载');
+            
+            // 简化的表单提交处理
+            var form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('补充信息表单提交事件被触发');
+                    console.log('表单action:', form.action);
+                    console.log('表单method:', form.method);
+                    
+                    return true;
+                });
+            }
+        });
+    </script>
+}
+
+@section ValidationScripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子菜单结构调试页面</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        /* 调试信息面板 */
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 15px;
+            z-index: 100000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-size: 11px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .debug-panel h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .debug-buttons button {
+            margin: 2px;
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .btn-red { background: #FF4444; color: white; }
+        .btn-blue { background: #4444FF; color: white; }
+        .btn-green { background: #44AA44; color: white; }
+        .btn-orange { background: #FF8844; color: white; }
+        
+        /* 收缩状态下的子菜单样式 - 简化版本 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-child {
+            display: none !important;
+        }
+
+        /* 强制显示子菜单的类 */
+        .layui-nav-child.show-submenu {
+            display: block !important;
+            position: fixed !important;
+            z-index: 99999 !important;
+            background-color: #2F4056 !important;
+            border-radius: 2px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            min-width: 160px !important;
+            border: 1px solid #393D49 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+        
+        /* 调试样式 - 显示边界 */
+        .debug-border {
+            border: 2px solid #FF0000 !important;
+            background-color: rgba(255, 0, 0, 0.1) !important;
+        }
+        
+        .debug-child-border {
+            border: 2px solid #00FF00 !important;
+            background-color: rgba(0, 255, 0, 0.1) !important;
+        }
+        
+        .debug-dd-border {
+            border: 1px solid #0000FF !important;
+            background-color: rgba(0, 0, 255, 0.1) !important;
+        }
+        
+        /* 移除所有内边距和外边距的测试样式 */
+        .no-padding {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .no-padding dd {
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        .no-padding dd a {
+            padding: 5px 10px !important;
+            margin: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 调试面板 -->
+    <div class="debug-panel">
+        <h4>🔍 子菜单结构调试工具</h4>
+        
+        <div class="debug-buttons">
+            <button class="btn-blue" onclick="toggleShrink()">切换收缩</button>
+            <button class="btn-red" onclick="forceShowSubmenu()">强制显示</button>
+            <button class="btn-green" onclick="showSubmenuWithBorders()">显示边界</button>
+            <button class="btn-orange" onclick="analyzeStructure()">分析结构</button>
+            <button onclick="testPaddingRemoval()" style="background: #8844FF; color: white; margin: 2px; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 10px;">移除内边距</button>
+            <button onclick="hideAllSubmenu()" style="background: #666; color: white; margin: 2px; padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 10px;">隐藏所有</button>
+        </div>
+        
+        <div id="analysis-result" style="margin-top: 10px; padding: 10px; background: #f5f5f5; border-radius: 3px; font-size: 10px;">
+            <strong>分析结果将显示在这里</strong>
+        </div>
+        
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 10px;">
+            <strong>调试说明：</strong><br>
+            1. 点击"切换收缩"设置收缩状态<br>
+            2. 点击"显示边界"查看子菜单边界<br>
+            3. 点击"分析结构"查看详细信息<br>
+            4. 点击"移除内边距"测试修复方案<br>
+            <br>
+            <strong>颜色说明：</strong><br>
+            🔴 红色边框：子菜单容器(dl)<br>
+            🟢 绿色边框：子菜单项(dd)<br>
+            🔵 蓝色边框：链接(a)
+        </div>
+    </div>
+
+    <!-- 主布局 -->
+    <div class="layui-layout layui-layout-admin" id="layout">
+        <!-- 头部 -->
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">子菜单结构调试</div>
+            <ul class="layui-nav layui-layout-left">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="layui-icon layui-icon-spread-left" id="shrink-btn"></a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 左侧导航 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <span>人员管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">人员信息</a></dd>
+                            <dd><a href="javascript:;">简化人员</a></dd>
+                            <dd><a href="javascript:;">部门管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-util"></i>
+                            <span>飞机管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">飞机信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 内容主体 -->
+        <div class="layui-body">
+            <div style="padding: 20px; background-color: #f5f5f5; min-height: 100vh;">
+                <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h2>子菜单结构问题调试</h2>
+                    <p>这个页面专门用于调试子菜单第一个选项位置偏移的问题。</p>
+                    
+                    <h3>问题描述：</h3>
+                    <p>子菜单的第一个选项总是在图标下方42像素的位置，就像上方有一个隐藏的空白菜单项。</p>
+                    
+                    <h3>可能的原因：</h3>
+                    <ul>
+                        <li>子菜单容器(dl)有内边距</li>
+                        <li>第一个子菜单项(dd)有外边距</li>
+                        <li>layui框架的默认样式影响</li>
+                        <li>CSS的盒模型计算问题</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wwwroot/lib/jquery/dist/jquery.min.js"></script>
+    <script src="wwwroot/lib/layui/layui.js"></script>
+    
+    <script>
+        function toggleShrink() {
+            var $layout = $('#layout');
+            $layout.toggleClass('layui-layout-shrink');
+            console.log('切换收缩状态');
+        }
+
+        function forceShowSubmenu() {
+            console.log('=== 强制显示子菜单 ===');
+
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+
+                // 强制显示子菜单
+                $child.addClass('show-submenu');
+                $child.css({
+                    'position': 'fixed',
+                    'left': sidebarWidth + 'px',
+                    'top': linkOffset.top + 'px',
+                    'z-index': '99999',
+                    'background-color': '#2F4056'
+                });
+
+                console.log('子菜单 ' + index + ' 已强制显示:', {
+                    menuText: $item.find('span').text(),
+                    linkOffset: linkOffset,
+                    sidebarWidth: sidebarWidth
+                });
+            });
+
+            $('#analysis-result').html('<strong>已强制显示子菜单</strong><br>观察子菜单第一个选项的位置');
+        }
+        
+        function showSubmenuWithBorders() {
+            console.log('=== 显示子菜单边界 ===');
+
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+
+                // 显示子菜单并添加边界
+                $child.addClass('show-submenu debug-border');
+                $child.css({
+                    'position': 'fixed',
+                    'left': sidebarWidth + 'px',
+                    'top': linkOffset.top + 'px',
+                    'z-index': '99999',
+                    'background-color': '#2F4056',
+                    'border': '3px solid #FF0000' // 强制红色边框
+                });
+
+                // 为每个dd添加边界
+                $child.find('dd').each(function() {
+                    $(this).css({
+                        'border': '2px solid #00FF00',
+                        'background-color': 'rgba(0, 255, 0, 0.1)'
+                    });
+                });
+
+                // 为每个链接添加边界
+                $child.find('dd a').each(function() {
+                    $(this).css({
+                        'border': '1px solid #0000FF',
+                        'background-color': 'rgba(0, 0, 255, 0.1)'
+                    });
+                });
+
+                console.log('子菜单 ' + index + ' 边界已显示:', {
+                    menuText: $item.find('span').text(),
+                    childElement: $child[0],
+                    ddCount: $child.find('dd').length
+                });
+            });
+
+            $('#analysis-result').html('<strong>边界已显示</strong><br>🔴 红色：子菜单容器<br>🟢 绿色：菜单项<br>🔵 蓝色：链接');
+        }
+        
+        function analyzeStructure() {
+            console.log('=== 分析子菜单结构 ===');
+            var analysis = [];
+            
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $firstDD = $child.find('dd:first');
+                var $firstLink = $firstDD.find('a');
+                
+                // 获取各种尺寸和位置信息
+                var childStyles = window.getComputedStyle($child[0]);
+                var ddStyles = window.getComputedStyle($firstDD[0]);
+                var linkStyles = window.getComputedStyle($firstLink[0]);
+                
+                var info = {
+                    menuText: $item.find('span').text(),
+                    childPadding: {
+                        top: childStyles.paddingTop,
+                        bottom: childStyles.paddingBottom,
+                        left: childStyles.paddingLeft,
+                        right: childStyles.paddingRight
+                    },
+                    childMargin: {
+                        top: childStyles.marginTop,
+                        bottom: childStyles.marginBottom,
+                        left: childStyles.marginLeft,
+                        right: childStyles.marginRight
+                    },
+                    ddPadding: {
+                        top: ddStyles.paddingTop,
+                        bottom: ddStyles.paddingBottom
+                    },
+                    ddMargin: {
+                        top: ddStyles.marginTop,
+                        bottom: ddStyles.marginBottom
+                    },
+                    linkPadding: {
+                        top: linkStyles.paddingTop,
+                        bottom: linkStyles.paddingBottom
+                    },
+                    linkMargin: {
+                        top: linkStyles.marginTop,
+                        bottom: linkStyles.marginBottom
+                    },
+                    childHeight: $child.outerHeight(),
+                    firstDDHeight: $firstDD.outerHeight(),
+                    firstLinkHeight: $firstLink.outerHeight()
+                };
+                
+                analysis.push(info);
+                console.log('子菜单 ' + index + ' 结构分析:', info);
+            });
+            
+            // 显示分析结果
+            var resultHtml = '<strong>结构分析结果：</strong><br>';
+            analysis.forEach(function(info, index) {
+                resultHtml += '<div style="margin: 5px 0; padding: 5px; background: #fff; border-radius: 2px;">';
+                resultHtml += '<strong>' + info.menuText + ':</strong><br>';
+                resultHtml += 'dl容器padding-top: ' + info.childPadding.top + '<br>';
+                resultHtml += 'dd项margin-top: ' + info.ddMargin.top + '<br>';
+                resultHtml += 'a链接padding-top: ' + info.linkPadding.top + '<br>';
+                resultHtml += '</div>';
+            });
+            
+            $('#analysis-result').html(resultHtml);
+        }
+        
+        function testPaddingRemoval() {
+            console.log('=== 测试移除内边距 ===');
+            
+            $('.layui-nav-child').each(function(index) {
+                var $child = $(this);
+                var $item = $child.closest('.layui-nav-item');
+                var $link = $item.find('> a');
+                var linkOffset = $link.offset();
+                var sidebarWidth = $('.layui-side').outerWidth();
+                
+                // 添加移除内边距的类
+                $child.addClass('show-submenu no-padding');
+                $child.css({
+                    'position': 'fixed',
+                    'left': sidebarWidth + 'px',
+                    'top': linkOffset.top + 'px',
+                    'z-index': '99999',
+                    'background-color': '#2F4056',
+                    'border': '2px solid #FF0000'
+                });
+                
+                console.log('子菜单 ' + index + ' 已移除内边距');
+            });
+            
+            $('#analysis-result').html('<strong>已移除所有内边距和外边距</strong><br>观察子菜单第一个选项的位置是否改善');
+        }
+        
+        function hideAllSubmenu() {
+            $('.layui-nav-child').removeClass('show-submenu debug-border no-padding');
+            $('.layui-nav-child').css({
+                'border': '',
+                'background-color': '',
+                'position': '',
+                'left': '',
+                'top': '',
+                'z-index': ''
+            });
+
+            $('.layui-nav-child dd').removeClass('debug-child-border').css({
+                'border': '',
+                'background-color': ''
+            });
+
+            $('.layui-nav-child dd a').removeClass('debug-dd-border').css({
+                'border': '',
+                'background-color': ''
+            });
+
+            $('#analysis-result').html('<strong>已隐藏所有子菜单和边界</strong>');
+            console.log('隐藏所有子菜单');
+        }
+
+        // 初始化
+        layui.use('element', function(){
+            var element = layui.element;
+            
+            $(document).ready(function() {
+                // 绑定收缩按钮
+                $('#shrink-btn').click(function() {
+                    toggleShrink();
+                });
+                
+                console.log('子菜单结构调试页面初始化完成');
+            });
+        });
+    </script>
+</body>
+</html>

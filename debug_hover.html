@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试悬停功能</title>
+    <link rel="stylesheet" href="wwwroot/lib/layui/css/layui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            z-index: 10000;
+            font-size: 12px;
+            max-width: 300px;
+        }
+        
+        .debug-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .debug-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        /* 收缩状态下子菜单的基础样式 - 默认隐藏但保持结构 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child {
+            display: block !important;
+            position: absolute !important;
+            left: 60px !important;
+            top: 0 !important;
+            z-index: 9999 !important;
+            background-color: #2F4056 !important;
+            border-radius: 2px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            min-width: 160px !important;
+            border: 1px solid #393D49 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateX(-10px) !important;
+            transition: all 0.2s ease !important;
+            pointer-events: none !important;
+        }
+
+        /* 显示子菜单的类 - 使用opacity和visibility实现平滑过渡 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item .layui-nav-child.show-submenu {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            pointer-events: auto !important;
+        }
+
+        /* 强制覆盖layui的所有可能的隐藏样式 - 包括展开状态的菜单项 */
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed .layui-nav-child {
+            display: block !important;
+            position: absolute !important;
+            left: 60px !important;
+            top: 0 !important;
+            z-index: 9999 !important;
+            background-color: #2F4056 !important;
+            border-radius: 2px !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            min-width: 160px !important;
+            border: 1px solid #393D49 !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transform: translateX(-10px) !important;
+            transition: all 0.2s ease !important;
+            pointer-events: none !important;
+        }
+
+        .layui-layout-admin.layui-layout-shrink .layui-nav-tree .layui-nav-item.layui-nav-itemed .layui-nav-child.show-submenu {
+            display: block !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateX(0) !important;
+            pointer-events: auto !important;
+        }
+        
+        /* 测试用的高亮样式 */
+        .debug-highlight {
+            background-color: red !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <h4>调试信息</h4>
+        <p id="shrink-status">收缩状态: 未知</p>
+        <p id="hover-status">悬停状态: 无</p>
+        <p id="submenu-status">子菜单状态: 无</p>
+        <button onclick="toggleShrink()">切换收缩状态</button>
+        <button onclick="forceShowSubmenu()">强制显示子菜单</button>
+    </div>
+
+    <div class="layui-layout layui-layout-admin" id="layout">
+        <!-- 左侧导航 -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-user"></i>
+                            <span>人员管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">人员信息</a></dd>
+                            <dd><a href="javascript:;">简化人员</a></dd>
+                            <dd><a href="javascript:;">部门管理</a></dd>
+                        </dl>
+                    </li>
+                    
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">
+                            <i class="layui-icon layui-icon-util"></i>
+                            <span>飞机管理</span>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">飞机信息</a></dd>
+                            <dd><a href="javascript:;">维护记录</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="wwwroot/lib/jquery/dist/jquery.min.js"></script>
+    <script src="wwwroot/lib/layui/layui.js"></script>
+    
+    <script>
+        function updateDebugInfo() {
+            var $layout = $('#layout');
+            var isShrink = $layout.hasClass('layui-layout-shrink');
+            $('#shrink-status').text('收缩状态: ' + (isShrink ? '是' : '否'));
+        }
+        
+        function toggleShrink() {
+            var $layout = $('#layout');
+            $layout.toggleClass('layui-layout-shrink');
+            updateDebugInfo();
+            enhanceShrinkHover();
+        }
+        
+        function forceShowSubmenu() {
+            $('.layui-nav-child').addClass('show-submenu debug-highlight');
+            $('#submenu-status').text('子菜单状态: 强制显示');
+        }
+        
+        // 增强收缩状态下的悬停功能
+        function enhanceShrinkHover() {
+            console.log('初始化悬停功能');
+            
+            // 移除所有之前的事件绑定
+            $(document).off('.shrink-hover');
+
+            // 为每个有子菜单的导航项绑定悬停事件
+            $('.layui-nav-tree .layui-nav-item').each(function() {
+                var $item = $(this);
+                var $child = $item.find('.layui-nav-child');
+
+                if ($child.length > 0) {
+                    console.log('绑定悬停事件到菜单项:', $item.find('span').text());
+                    
+                    // 鼠标进入菜单项
+                    $item.on('mouseenter.shrink-hover', function() {
+                        console.log('鼠标进入菜单项:', $(this).find('span').text());
+                        $('#hover-status').text('悬停状态: 进入菜单项');
+                        
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            console.log('收缩状态，显示子菜单');
+                            clearTimeout($item.data('hideTimer'));
+                            clearTimeout($item.data('showTimer'));
+                            
+                            var showTimer = setTimeout(function() {
+                                console.log('添加show-submenu类');
+                                $child.addClass('show-submenu');
+                                $('#submenu-status').text('子菜单状态: 显示');
+                            }, 100);
+                            $item.data('showTimer', showTimer);
+                        }
+                    });
+
+                    // 鼠标离开菜单项
+                    $item.on('mouseleave.shrink-hover', function() {
+                        console.log('鼠标离开菜单项');
+                        $('#hover-status').text('悬停状态: 离开菜单项');
+                        
+                        if ($('.layui-layout-admin').hasClass('layui-layout-shrink')) {
+                            clearTimeout($item.data('showTimer'));
+                            
+                            var hideTimer = setTimeout(function() {
+                                console.log('移除show-submenu类');
+                                $child.removeClass('show-submenu');
+                                $('#submenu-status').text('子菜单状态: 隐藏');
+                            }, 300);
+                            $item.data('hideTimer', hideTimer);
+                        }
+                    });
+                }
+            });
+        }
+
+        layui.use('element', function(){
+            var element = layui.element;
+            
+            $(document).ready(function() {
+                updateDebugInfo();
+                enhanceShrinkHover();
+                
+                // 默认设置为收缩状态进行测试
+                $('#layout').addClass('layui-layout-shrink');
+                updateDebugInfo();
+            });
+        });
+    </script>
+</body>
+</html>

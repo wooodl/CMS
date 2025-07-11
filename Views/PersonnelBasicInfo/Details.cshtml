@@ -25,13 +25,15 @@
                 <!-- Tab 选项卡 -->
                 <div class="layui-tab layui-tab-brief" lay-filter="personnelTab">
                     <ul class="layui-tab-title">
-                        <li class="layui-this">基本信息</li>
-                        <li>奖惩记录</li>
-                        <li>工作履历</li>
-                        <li>配偶信息</li>
-                        <li>家庭成员</li>
-                        <li>工作记录</li>
-                        <li>活动记录</li>
+                        <li class="layui-this" lay-id="0">基本信息</li>
+                        <li lay-id="1">补充信息</li>
+                        <li lay-id="2">奖惩记录</li>
+                        <li lay-id="3">工作履历</li>
+                        <li lay-id="4">培训情况</li>
+                        <li lay-id="5">配偶信息</li>
+                        <li lay-id="6">家庭成员</li>
+                        <li lay-id="7">工作记录</li>
+                        <li lay-id="8">活动记录</li>
                     </ul>
                     <div class="layui-tab-content">
                         
@@ -64,6 +66,10 @@
                                             <tr>
                                                 <td><strong>学历</strong></td>
                                                 <td>@(Model.Education ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>民族</strong></td>
+                                                <td>@(Model.Nation ?? "-")</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>政治面貌</strong></td>
@@ -120,33 +126,110 @@
                                                 <td>@(Model.Grade ?? "-")</td>
                                             </tr>
                                             <tr>
-                                                <td><strong>联系电话</strong></td>
-                                                <td>@(Model.Phone ?? "-")</td>
+                                                <td><strong>职务等级</strong></td>
+                                                <td>@(Model.DutyLevel ?? "-")</td>
                                             </tr>
                                             <tr>
-                                                <td><strong>近三年优秀次数</strong></td>
-                                                <td>@Model.ExcellentCount 次</td>
+                                                <td><strong>工作证号</strong></td>
+                                                <td>@(Model.WorkId ?? "-")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>联系电话</strong></td>
+                                                <td>@(Model.Phone ?? "-")</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            
-                            @if (!string.IsNullOrEmpty(Model.HomeAddress) || !string.IsNullOrEmpty(Model.WorkAddress))
+                        </div>
+
+                        <!-- 补充信息 -->
+                        <div class="layui-tab-item">
+                            @if (Model.SupplementaryInfo != null && !Model.SupplementaryInfo.IsDeleted)
                             {
-                                <fieldset class="layui-elem-field">
-                                    <legend>地址信息</legend>
-                                    <div class="layui-field-box">
-                                        @if (!string.IsNullOrEmpty(Model.HomeAddress))
-                                        {
-                                            <p><strong>家庭住址：</strong>@Model.HomeAddress</p>
-                                        }
-                                        @if (!string.IsNullOrEmpty(Model.WorkAddress))
-                                        {
-                                            <p><strong>单位地址：</strong>@Model.WorkAddress</p>
-                                        }
+                                <div style="margin-bottom: 15px;">
+                                    <a href="@Url.Action("EditSupplementaryInfoByPersonnelId", new { id = Model.PersonnelId })" class="layui-btn layui-btn-normal">
+                                        <i class="layui-icon layui-icon-edit"></i> 编辑补充信息
+                                    </a>
+                                </div>
+                                
+                                <div class="layui-row layui-col-space20">
+                                    <div class="layui-col-md6">
+                                        <table class="layui-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="130"><strong>入党(团)时间</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.PartyJoinDate?.ToString("yyyy-MM") ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>最近级别调整时间</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.LastGradeAdjustmentDate?.ToString("yyyy-MM") ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>待遇级别</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.TreatmentLevel ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>最近待遇调整时间</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.LastTreatmentAdjustmentDate?.ToString("yyyy-MM") ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>加入部门时间</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.DepartmentJoinDate?.ToString("yyyy-MM") ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>职级评定时间</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.RankAssessmentDate?.ToString("yyyy-MM") ?? "-")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </fieldset>
+                                    <div class="layui-col-md6">
+                                        <table class="layui-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="130"><strong>最近一次考核结果</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.LastAssessmentResult ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>近三年优秀次数</strong></td>
+                                                    <td>@Model.SupplementaryInfo.ExcellentCount</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>个人照片</strong></td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(Model.SupplementaryInfo.PhotoPath))
+                                                        {
+                                                            <img src="@Model.SupplementaryInfo.PhotoPath" alt="个人照片" style="max-width: 100px; max-height: 100px;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>未上传</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>家庭住址</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.HomeAddress ?? "-")</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>单位地址</strong></td>
+                                                    <td>@(Model.SupplementaryInfo.WorkAddress ?? "-")</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无补充信息</p>
+                                    <a href="@Url.Action("CreateSupplementaryInfo", new { id = Model.PersonnelId })" class="layui-btn layui-btn-normal">
+                                        <i class="layui-icon layui-icon-add-1"></i> 添加补充信息
+                                    </a>
+                                </div>
                             }
                         </div>
 
@@ -184,6 +267,7 @@
                                                 <td>@item.Reason</td>
                                                 <td>@item.DecisionUnit</td>
                                                 <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editRewardPunishment('@item.Id')">编辑</button>
                                                     <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'RewardPunishment')">删除</button>
                                                 </td>
                                             </tr>
@@ -230,6 +314,7 @@
                                                 <td>@item.Role</td>
                                                 <td>@(item.WorkDescription ?? "-")</td>
                                                 <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editHistory('@item.Id')">编辑</button>
                                                     <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'History')">删除</button>
                                                 </td>
                                             </tr>
@@ -246,13 +331,77 @@
                             }
                         </div>
 
+                        <!-- 培训情况 -->
+                        <div class="layui-tab-item">
+                            <div style="margin-bottom: 15px;">
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="addTraining()">
+                                    <i class="layui-icon layui-icon-add-1"></i> 添加培训记录
+                                </button>
+                            </div>
+                            @if (Model.Trainings.Any())
+                            {
+                                <table class="layui-table">
+                                    <thead>
+                                        <tr>
+                                            <th>培训时间</th>
+                                            <th>培训名称</th>
+                                            <th>培训机构</th>
+                                            <th>培训地点</th>
+                                            <th>培训天数</th>
+                                            <th>培训结果</th>
+                                            <th>证书情况</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Trainings.OrderByDescending(t => t.StartDate))
+                                        {
+                                            <tr>
+                                                <td>@(item.StartDate?.ToString("yyyy-MM-dd") ?? "-") ~ @(item.EndDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                                <td>@item.TrainingName</td>
+                                                <td>@item.TrainingOrganization</td>
+                                                <td>@item.TrainingLocation</td>
+                                                <td>@item.TrainingDays 天</td>
+                                                <td>@(item.TrainingResult ?? "-")</td>
+                                                <td>
+                                                    @if (item.HasCertificate)
+                                                    {
+                                                        <span class="layui-badge layui-bg-green">已获得</span><br>
+                                                        <small>@(item.CertificateName ?? "")</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="layui-badge layui-bg-gray">未获得</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editTraining('@item.Id')">编辑</button>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'Training')">删除</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="layui-text" style="text-align: center; padding: 50px;">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 50px; color: #999;"></i>
+                                    <p style="color: #999;">暂无培训记录</p>
+                                </div>
+                            }
+                        </div>
+
                         <!-- 配偶信息 -->
                         <div class="layui-tab-item">
                             @if (Model.Spouse != null && !Model.Spouse.IsDeleted)
                             {
                                 <div style="margin-bottom: 15px;">
-                                    <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="editSpouse()">
+                                    <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="editSpouse('@Model.Spouse.Id')">
                                         <i class="layui-icon layui-icon-edit"></i> 编辑配偶信息
+                                    </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="deleteRecord('@Model.Spouse.Id', 'Spouse')">
+                                        <i class="layui-icon layui-icon-delete"></i> 删除配偶信息
                                     </button>
                                 </div>
                                 <div class="layui-row layui-col-space20">
@@ -376,6 +525,7 @@
                                                 <td>@(item.WorkUnit ?? "-")</td>
                                                 <td>@(item.Phone ?? "-")</td>
                                                 <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editFamilyMember('@item.Id')">编辑</button>
                                                     <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'FamilyMember')">删除</button>
                                                 </td>
                                             </tr>
@@ -422,6 +572,7 @@
                                                 <td>@(item.WorkType ?? "-")</td>
                                                 <td>@(item.WorkResult ?? "-")</td>
                                                 <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editWorkRecord('@item.Id')">编辑</button>
                                                     <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'WorkRecord')">删除</button>
                                                 </td>
                                             </tr>
@@ -470,6 +621,7 @@
                                                 <td>@item.ParticipantRole</td>
                                                 <td>@(item.Achievement ?? "-")</td>
                                                 <td>
+                                                    <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editActivityRecord('@item.Id')">编辑</button>
                                                     <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRecord('@item.Id', 'ActivityRecord')">删除</button>
                                                 </td>
                                             </tr>
@@ -498,38 +650,153 @@
             var element = layui.element;
             var layer = layui.layer;
             
-            // 添加功能的占位函数
+            // 延迟执行，确保DOM完全加载
+            setTimeout(function() {
+                // 处理tab参数，切换到指定的标签页
+                var urlParams = new URLSearchParams(window.location.search);
+                var tabIndex = urlParams.get('tab');
+                console.log('当前URL参数 tab:', tabIndex);
+                
+                if (tabIndex !== null && tabIndex !== '') {
+                    var tabNumber = parseInt(tabIndex);
+                    console.log('解析的tab索引:', tabNumber);
+                    
+                    if (tabNumber >= 0 && tabNumber <= 8) {
+                        console.log('切换到tab:', tabNumber);
+                        
+                        // 直接操作DOM元素来切换tab
+                        var tabTitles = document.querySelectorAll('.layui-tab-title li');
+                        var tabContents = document.querySelectorAll('.layui-tab-item');
+                        
+                        // 移除所有活动状态
+                        tabTitles.forEach(function(title) {
+                            title.classList.remove('layui-this');
+                        });
+                        tabContents.forEach(function(content) {
+                            content.classList.remove('layui-show');
+                        });
+                        
+                        // 激活指定tab
+                        if (tabTitles[tabNumber]) {
+                            tabTitles[tabNumber].classList.add('layui-this');
+                        }
+                        if (tabContents[tabNumber]) {
+                            tabContents[tabNumber].classList.add('layui-show');
+                        }
+                        
+                        console.log('已切换到tab索引:', tabNumber);
+                    } else {
+                        console.log('tab索引超出范围');
+                    }
+                } else {
+                    console.log('没有找到tab参数');
+                }
+            }, 200);
+            
+            // 奖惩记录管理
             window.addRewardPunishment = function() {
-                layer.msg('奖惩记录管理功能开发中...', {icon: 6});
+                location.href = '@Url.Action("CreateRewardPunishment", new { id = Model.PersonnelId })';
             };
             
+            window.editRewardPunishment = function(id) {
+                location.href = '@Url.Action("EditRewardPunishment", new { id = "__ID__" })'.replace('__ID__', id);
+            };
+            
+            // 工作履历管理
             window.addHistory = function() {
-                layer.msg('履历记录管理功能开发中...', {icon: 6});
+                location.href = '@Url.Action("CreateHistory", new { id = Model.PersonnelId })';
             };
             
-            window.addSpouse = function() {
-                layer.msg('配偶信息管理功能开发中...', {icon: 6});
+            window.editHistory = function(id) {
+                location.href = '@Url.Action("EditHistory", new { id = "__ID__" })'.replace('__ID__', id);
             };
             
-            window.editSpouse = function() {
-                layer.msg('配偶信息编辑功能开发中...', {icon: 6});
-            };
-            
-            window.addFamilyMember = function() {
-                layer.msg('家庭成员管理功能开发中...', {icon: 6});
-            };
-            
+            // 工作记录管理
             window.addWorkRecord = function() {
-                layer.msg('工作记录管理功能开发中...', {icon: 6});
+                location.href = '@Url.Action("CreateWorkRecord", new { id = Model.PersonnelId })';
             };
             
+            window.editWorkRecord = function(id) {
+                location.href = '@Url.Action("EditWorkRecord", new { id = "__ID__" })'.replace('__ID__', id);
+            };
+            
+            // 活动记录管理
             window.addActivityRecord = function() {
-                layer.msg('活动记录管理功能开发中...', {icon: 6});
+                location.href = '@Url.Action("CreateActivityRecord", new { id = Model.PersonnelId })';
+            };
+            
+            window.editActivityRecord = function(id) {
+                location.href = '@Url.Action("EditActivityRecord", new { id = "__ID__" })'.replace('__ID__', id);
+            };
+            
+            // 配偶信息管理
+            window.addSpouse = function() {
+                location.href = '@Url.Action("CreateSpouse", new { id = Model.PersonnelId })';
+            };
+            
+            window.editSpouse = function(id) {
+                location.href = '@Url.Action("EditSpouse", new { id = "__ID__" })'.replace('__ID__', id);
+            };
+            
+            // 家庭成员管理
+            window.addFamilyMember = function() {
+                location.href = '@Url.Action("CreateFamilyMember", new { id = Model.PersonnelId })';
+            };
+            
+            window.editFamilyMember = function(id) {
+                location.href = '@Url.Action("EditFamilyMember", new { id = "__ID__" })'.replace('__ID__', id);
+            };
+            
+            // 添加培训记录
+            window.addTraining = function() {
+                location.href = '@Url.Action("CreateTraining", new { id = Model.PersonnelId })';
+            };
+            
+            // 编辑培训记录
+            window.editTraining = function(id) {
+                location.href = '@Url.Action("EditTraining", new { id = "__ID__" })'.replace('__ID__', id);
             };
             
             window.deleteRecord = function(id, type) {
                 layer.confirm('确定要删除这条记录吗？', {icon: 3, title:'提示'}, function(index){
-                    layer.msg('删除功能开发中...', {icon: 6});
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    
+                    var tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)[1];
+                    
+                    var idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'id';
+                    idInput.value = id;
+                    
+                    form.appendChild(tokenInput);
+                    form.appendChild(idInput);
+                    
+                    if (type === 'Training') {
+                        form.action = '@Url.Action("DeleteTraining")';
+                    } else if (type === 'RewardPunishment') {
+                        form.action = '@Url.Action("DeleteRewardPunishment")';
+                    } else if (type === 'History') {
+                        form.action = '@Url.Action("DeleteHistory")';
+                    } else if (type === 'WorkRecord') {
+                        form.action = '@Url.Action("DeleteWorkRecord")';
+                    } else if (type === 'ActivityRecord') {
+                        form.action = '@Url.Action("DeleteActivityRecord")';
+                    } else if (type === 'Spouse') {
+                        form.action = '@Url.Action("DeleteSpouse")';
+                    } else if (type === 'FamilyMember') {
+                        form.action = '@Url.Action("DeleteFamilyMember")';
+                    } else {
+                        layer.msg('删除功能开发中...', {icon: 6});
+                        layer.close(index);
+                        return;
+                    }
+                    
+                    document.body.appendChild(form);
+                    form.submit();
                     layer.close(index);
                 });
             };

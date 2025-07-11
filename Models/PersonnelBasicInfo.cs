@@ -42,6 +42,12 @@ namespace ComprehensiveManagementSystem.Models
         public string? NativePlace { get; set; }
 
         /// <summary>
+        /// 民族
+        /// </summary>
+        [StringLength(50, ErrorMessage = "民族长度不能超过50个字符")]
+        public string? Nation { get; set; }
+
+        /// <summary>
         /// 学历
         /// </summary>
         [StringLength(50, ErrorMessage = "学历长度不能超过50个字符")]
@@ -63,16 +69,16 @@ namespace ComprehensiveManagementSystem.Models
         public DateTime HireDate { get; set; }
 
         /// <summary>
+        /// 工作证号
+        /// </summary>
+        [StringLength(50, ErrorMessage = "工作证号长度不能超过50个字符")]
+        public string? WorkId { get; set; }
+
+        /// <summary>
         /// 政治面貌
         /// </summary>
         [StringLength(50, ErrorMessage = "政治面貌长度不能超过50个字符")]
         public string? PoliticalStatus { get; set; }
-
-        /// <summary>
-        /// 入党（团）时间
-        /// </summary>
-        [DataType(DataType.Date)]
-        public DateTime? PartyJoinDate { get; set; }
 
         /// <summary>
         /// 婚否（0-未婚，1-已婚，2-离异，3-丧偶）
@@ -91,23 +97,6 @@ namespace ComprehensiveManagementSystem.Models
         [StringLength(50, ErrorMessage = "级别长度不能超过50个字符")]
         public string? Grade { get; set; }
 
-        /// <summary>
-        /// 最近级别调整时间
-        /// </summary>
-        [DataType(DataType.Date)]
-        public DateTime? LastGradeAdjustmentDate { get; set; }
-
-        /// <summary>
-        /// 待遇级别
-        /// </summary>
-        [StringLength(50, ErrorMessage = "待遇级别长度不能超过50个字符")]
-        public string? TreatmentLevel { get; set; }
-
-        /// <summary>
-        /// 最近待遇调整时间
-        /// </summary>
-        [DataType(DataType.Date)]
-        public DateTime? LastTreatmentAdjustmentDate { get; set; }
 
         /// <summary>
         /// 部门ID
@@ -120,11 +109,6 @@ namespace ComprehensiveManagementSystem.Models
         [ForeignKey("DepartmentId")]
         public Department? Department { get; set; }
 
-        /// <summary>
-        /// 加入部门时间
-        /// </summary>
-        [DataType(DataType.Date)]
-        public DateTime? DepartmentJoinDate { get; set; }
 
         /// <summary>
         /// 岗位
@@ -144,29 +128,6 @@ namespace ComprehensiveManagementSystem.Models
         [StringLength(50, ErrorMessage = "职务等级长度不能超过50个字符")]
         public string? DutyLevel { get; set; }
 
-        /// <summary>
-        /// 职级评定时间
-        /// </summary>
-        [DataType(DataType.Date)]
-        public DateTime? RankAssessmentDate { get; set; }
-
-        /// <summary>
-        /// 最近一次考核结果
-        /// </summary>
-        [StringLength(50, ErrorMessage = "考核结果长度不能超过50个字符")]
-        public string? LastAssessmentResult { get; set; }
-
-        /// <summary>
-        /// 最近三年优秀次数
-        /// </summary>
-        [Range(0, 10, ErrorMessage = "优秀次数必须在0-10之间")]
-        public int ExcellentCount { get; set; }
-
-        /// <summary>
-        /// 证件照路径
-        /// </summary>
-        [StringLength(500, ErrorMessage = "证件照路径长度不能超过500个字符")]
-        public string? PhotoPath { get; set; }
 
         /// <summary>
         /// 联系电话
@@ -175,17 +136,6 @@ namespace ComprehensiveManagementSystem.Models
         [RegularExpression(@"^1[3-9]\d{9}$", ErrorMessage = "手机号格式不正确")]
         public string? Phone { get; set; }
 
-        /// <summary>
-        /// 家庭住址
-        /// </summary>
-        [StringLength(200, ErrorMessage = "家庭住址长度不能超过200个字符")]
-        public string? HomeAddress { get; set; }
-
-        /// <summary>
-        /// 单位地址
-        /// </summary>
-        [StringLength(200, ErrorMessage = "单位地址长度不能超过200个字符")]
-        public string? WorkAddress { get; set; }
 
         /// <summary>
         /// 创建时间
@@ -203,6 +153,11 @@ namespace ComprehensiveManagementSystem.Models
         public bool IsDeleted { get; set; } = false;
 
         // 导航属性
+        /// <summary>
+        /// 人员补充信息
+        /// </summary>
+        public virtual PersonnelSupplementaryInfo? SupplementaryInfo { get; set; }
+
         /// <summary>
         /// 人员奖惩记录
         /// </summary>
@@ -232,6 +187,11 @@ namespace ComprehensiveManagementSystem.Models
         /// 活动记录
         /// </summary>
         public virtual ICollection<PersonnelActivityRecord> ActivityRecords { get; set; } = new List<PersonnelActivityRecord>();
+
+        /// <summary>
+        /// 培训记录
+        /// </summary>
+        public virtual ICollection<PersonnelTraining> Trainings { get; set; } = new List<PersonnelTraining>();
     }
 
 
