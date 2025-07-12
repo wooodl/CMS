@@ -25,6 +25,7 @@ namespace ComprehensiveManagementSystem.Data
         public DbSet<PersonnelWorkRecord> PersonnelWorkRecords { get; set; }
         public DbSet<PersonnelActivityRecord> PersonnelActivityRecords { get; set; }
         public DbSet<PersonnelTraining> PersonnelTrainings { get; set; }
+        public DbSet<PersonnelChange> PersonnelChanges { get; set; }
 
         // 飞机管理
         public DbSet<Aircraft> Aircraft { get; set; }
@@ -65,6 +66,7 @@ namespace ComprehensiveManagementSystem.Data
             // 配置实体关系和约束
             ConfigurePersonnel(builder);
             ConfigurePersonnelDetail(builder);
+            ConfigurePersonnelChange(builder);
             ConfigureInventory(builder);
             ConfigureEquipment(builder);
             ConfigureAircraft(builder);
@@ -323,6 +325,36 @@ namespace ComprehensiveManagementSystem.Data
                 entity.HasOne(e => e.Personnel)
                       .WithMany(p => p.Trainings)
                       .HasForeignKey(e => e.PersonnelId);
+            });
+        }
+
+        private void ConfigurePersonnelChange(ModelBuilder builder)
+        {
+            builder.Entity<PersonnelChange>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.ChangeType).IsRequired();
+                entity.Property(e => e.ChangeDate).IsRequired();
+                entity.Property(e => e.Status).IsRequired();
+                
+                // 配置与人员的关系
+                entity.HasOne(e => e.Personnel)
+                      .WithMany()
+                      .HasForeignKey(e => e.PersonnelId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                
+                // 配置与变动前机构的关系
+                entity.HasOne(e => e.PreviousOrganization)
+                      .WithMany()
+                      .HasForeignKey(e => e.PreviousOrganizationId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                
+                // 配置与变动后机构的关系
+                entity.HasOne(e => e.NewOrganization)
+                      .WithMany()
+                      .HasForeignKey(e => e.NewOrganizationId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
 

@@ -1,0 +1,350 @@
+@{
+    ViewData["Title"] = "人员变动管理";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>人员变动管理</h3>
+            </div>
+            <div class="layui-card-body">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-normal" lay-close="">
+                        <i class="layui-icon layui-icon-ok-circle"></i>
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-danger" lay-close="">
+                        <i class="layui-icon layui-icon-close"></i>
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <!-- 标签页 -->
+                <div class="layui-tab layui-tab-brief" lay-filter="personnelChangeTab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this" lay-id="1">入职</li>
+                        <li lay-id="2">离职</li>
+                        <li lay-id="3">调入</li>
+                        <li lay-id="4">调出</li>
+                        <li lay-id="5">晋升</li>
+                        <li lay-id="6">党员发展</li>
+                        <li lay-id="7">职务变动</li>
+                        <li lay-id="8">部门变动</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show" id="tab-content-1">
+                            <!-- 内容将通过AJAX加载 -->
+                            <div class="loading-content">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>
+                                加载中...
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-2">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载离职记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(2)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-3">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载调入记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(3)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-4">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载调出记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(4)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-5">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载晋升记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(5)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-6">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载党员发展记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(6)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-7">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载职务变动记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(7)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                        <div class="layui-tab-item" id="tab-content-8">
+                            <div class="initial-content" style="text-align: center; padding: 50px; color: #999;">
+                                <i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                                正在加载部门变动记录...
+                                <br><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(8)" style="margin-top: 10px;">手动加载</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        layui.use(['element', 'form', 'layer', 'laypage'], function(){
+            var element = layui.element;
+            var form = layui.form;
+            var layer = layui.layer;
+            var laypage = layui.laypage;
+            
+            // 将laypage设置为全局变量，供partial view使用
+            window.layuiLaypage = laypage;
+
+            // 标签页切换事件
+            element.on('tab(personnelChangeTab)', function(data){
+                console.log('Tab switched to:', data.layId);
+                var changeType = data.layId;
+                var tabContent = $('#tab-content-' + changeType);
+                
+                // 检查是否需要加载数据
+                var hasInitialContent = tabContent.find('.initial-content').length > 0;
+                var hasLoadingContent = tabContent.find('.loading-content').length > 0;
+                var hasNoDataContent = tabContent.find('table').length === 0;
+                
+                console.log('Tab content analysis:', {
+                    hasInitialContent: hasInitialContent,
+                    hasLoadingContent: hasLoadingContent,
+                    hasNoDataContent: hasNoDataContent,
+                    contentLength: tabContent.html().length
+                });
+                
+                // 如果有初始内容、加载内容，或者没有表格，则重新加载数据
+                if (hasInitialContent || hasLoadingContent || hasNoDataContent) {
+                    console.log('Loading data for tab:', changeType);
+                    loadTabData(changeType);
+                } else {
+                    console.log('Tab already has data, skipping load');
+                }
+            });
+
+            // 页面加载时加载第一个标签页数据
+            loadTabData(1);
+            
+            // 预加载其他标签页数据
+            // 由于用户反馈其他标签页没有内容，我们在页面加载时就加载所有标签页
+            setTimeout(function() {
+                for (var i = 2; i <= 8; i++) {
+                    loadTabData(i);
+                }
+            }, 500); // 延迟500ms加载，避免并发请求过多
+
+            // 加载标签页数据
+            function loadTabData(changeType, page = 1) {
+                console.log('=== loadTabData START ===');
+                console.log('Parameters:', { changeType: changeType, page: page });
+                
+                var tabContent = $('#tab-content-' + changeType);
+                console.log('Tab content element:', {
+                    found: tabContent.length > 0,
+                    currentHtml: tabContent.html().substring(0, 100) + '...'
+                });
+                
+                if (tabContent.length === 0) {
+                    console.error('Tab content element not found for changeType:', changeType);
+                    return;
+                }
+                
+                // 显示加载状态
+                tabContent.html('<div class="loading-content" style="text-align: center; padding: 50px; color: #999;"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>正在加载数据...</div>');
+                
+                var ajaxUrl = '@Url.Action("TabData")';
+                console.log('AJAX URL:', ajaxUrl);
+                console.log('AJAX parameters:', { changeType: changeType, page: page });
+                
+                $.get(ajaxUrl, {
+                    changeType: changeType,
+                    page: page
+                }).done(function(data) {
+                    console.log('=== AJAX SUCCESS ===');
+                    console.log('Response data length:', data ? data.length : 'null');
+                    console.log('Response preview:', data ? data.substring(0, 200) + '...' : 'empty');
+                    
+                    if (data && data.trim().length > 0) {
+                        tabContent.html(data);
+                        console.log('Content updated for tab:', changeType);
+                        
+                        // 重新渲染LayUI组件
+                        setTimeout(function() {
+                            if (typeof layui !== 'undefined') {
+                                layui.form.render();
+                                layui.element.render();
+                                console.log('LayUI components re-rendered for tab:', changeType);
+                            }
+                        }, 100);
+                    } else {
+                        console.warn('Empty response received for tab:', changeType);
+                        tabContent.html('<div class="layui-text" style="text-align: center; padding: 50px;"><p>暂无数据</p></div>');
+                    }
+                    console.log('=== loadTabData END (SUCCESS) ===');
+                }).fail(function(xhr, status, error) {
+                    console.log('=== AJAX FAIL ===');
+                    console.error('AJAX Error details:', {
+                        status: status,
+                        error: error,
+                        responseStatus: xhr.status,
+                        responseText: xhr.responseText
+                    });
+                    
+                    var errorMsg = '加载失败，请重试';
+                    if (xhr.status === 404) {
+                        errorMsg = '请求的页面不存在';
+                    } else if (xhr.status === 500) {
+                        errorMsg = '服务器内部错误';
+                    }
+                    
+                    tabContent.html('<div class="layui-text" style="text-align: center; padding: 50px;"><p>' + errorMsg + '</p><p style="color: #ff5722; font-size: 12px;">错误信息: ' + error + '</p><button type="button" class="layui-btn layui-btn-sm" onclick="loadTabData(' + changeType + ')">重新加载</button></div>');
+                    console.log('=== loadTabData END (FAIL) ===');
+                });
+            }
+
+            // 全局函数：重新加载当前标签数据
+            window.reloadCurrentTab = function() {
+                var currentTab = $('.layui-tab-title .layui-this').attr('lay-id');
+                loadTabData(currentTab);
+            };
+
+            // 全局函数：显示创建模态框
+            window.showCreateModal = function(changeType) {
+                console.log('showCreateModal called with changeType:', changeType);
+                $.get('@Url.Action("CreateByType")', { changeType: changeType })
+                    .done(function(data) {
+                        console.log('CreateByType response received');
+                        
+                        // 直接使用获取到的数据作为content
+                        var layerIndex = layer.open({
+                            type: 1,
+                            title: '新增变动记录',
+                            content: data,
+                            area: ['900px', '600px'],
+                            maxmin: true,
+                            scrollbar: false,
+                            shadeClose: false,
+                            shade: 0.3,
+                            btn: ['保存', '取消'],
+                            yes: function(index) {
+                                submitModalForm(index, false);
+                            },
+                            btn2: function(index) {
+                                layer.close(index);
+                            },
+                            success: function(layero, index) {
+                                // 模态框打开后重新渲染layui组件
+                                setTimeout(function() {
+                                    if (typeof layui !== 'undefined' && layui.form) {
+                                        layui.form.render();
+                                    }
+                                }, 100);
+                            }
+                        });
+                    })
+                    .fail(function(xhr, status, error) {
+                        console.error('CreateByType failed:', error, xhr.responseText);
+                        layer.msg('加载表单失败：' + error, { icon: 2 });
+                    });
+            };
+
+            // 全局函数：显示编辑模态框
+            window.showEditModal = function(id) {
+                $.get('@Url.Action("EditByType")', { id: id })
+                    .done(function(data) {
+                        layer.open({
+                            type: 1,
+                            title: '编辑变动记录',
+                            content: data,
+                            area: ['900px', '600px'],
+                            maxmin: true,
+                            scrollbar: false,
+                            shadeClose: false,
+                            shade: 0.3,
+                            btn: ['保存', '取消'],
+                            yes: function(index) {
+                                submitModalForm(index, true);
+                            },
+                            btn2: function(index) {
+                                layer.close(index);
+                            },
+                            success: function(layero, index) {
+                                // 模态框打开后重新渲染layui组件
+                                setTimeout(function() {
+                                    if (typeof layui !== 'undefined' && layui.form) {
+                                        layui.form.render();
+                                    }
+                                }, 100);
+                            }
+                        });
+                    })
+                    .fail(function(xhr, status, error) {
+                        console.error('EditByType failed:', error, xhr.responseText);
+                        layer.msg('加载表单失败：' + error, { icon: 2 });
+                    });
+            };
+
+            // 提交模态框表单
+            function submitModalForm(layerIndex, isEdit) {
+                var $modal = $('#layui-layer' + layerIndex);
+                var formData = $modal.find('form').serialize() + '&isModal=true';
+                var url = isEdit ? '@Url.Action("Edit")' : '@Url.Action("Create")';
+                
+                if (!formData || formData === '&isModal=true') {
+                    layer.msg('表单数据为空，请检查表单', { icon: 2 });
+                    return;
+                }
+                
+                $.post(url, formData)
+                    .done(function(response) {
+                        if (response.success) {
+                            layer.msg(response.message, { icon: 1 });
+                            layer.close(layerIndex);
+                            reloadCurrentTab();
+                        } else {
+                            layer.msg(response.message, { icon: 2 });
+                        }
+                    })
+                    .fail(function() {
+                        layer.msg('操作失败，请重试', { icon: 2 });
+                    });
+            }
+
+            // 全局函数：删除记录
+            window.deleteRecord = function(id, name) {
+                layer.confirm('确定要删除 "' + name + '" 的变动记录吗？', {
+                    icon: 3,
+                    title: '确认删除'
+                }, function(index) {
+                    $.post('@Url.Action("DeleteConfirmed")', {
+                        id: id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    }).done(function() {
+                        layer.msg('删除成功', { icon: 1 });
+                        layer.close(index);
+                        reloadCurrentTab();
+                    }).fail(function() {
+                        layer.msg('删除失败，请重试', { icon: 2 });
+                    });
+                });
+            };
+        });
+    </script>
+}

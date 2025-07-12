@@ -1,0 +1,144 @@
+@model ComprehensiveManagementSystem.Models.PersonnelChange
+
+@{
+    ViewData["Title"] = "删除人员变动";
+}
+
+<div class="layui-body">
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this">删除人员变动记录</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div style="margin: 20px;">
+                    <div class="layui-panel">
+                        <div class="layui-panel-title">确认删除以下人员变动记录？</div>
+                        <div class="layui-panel-body">
+                            <div class="layui-row">
+                                <div class="layui-col-md6">
+                                    <label>人员姓名：</label>
+                                    <span>@Html.DisplayFor(model => model.Personnel.Name)</span>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <label>变动类型：</label>
+                                    <span>
+                                        @switch(Model.ChangeType)
+                                        {
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.Onboard:
+                                                <span class="layui-badge layui-bg-green">入职</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.Resign:
+                                                <span class="layui-badge layui-bg-red">离职</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferIn:
+                                                <span class="layui-badge layui-bg-blue">调入</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferOut:
+                                                <span class="layui-badge layui-bg-orange">调出</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.Promotion:
+                                                <span class="layui-badge layui-bg-green">晋升</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.PartyDevelopment:
+                                                <span class="layui-badge layui-bg-cyan">党员发展</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.PositionChange:
+                                                <span class="layui-badge">职务变动</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeType.OrganizationTransfer:
+                                                <span class="layui-badge">机构变动</span>
+                                                break;
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="layui-row" style="margin-top: 15px;">
+                                <div class="layui-col-md6">
+                                    <label>变动日期：</label>
+                                    <span>@Model.ChangeDate.ToString("yyyy-MM-dd")</span>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <label>变动状态：</label>
+                                    <span>
+                                        @switch(Model.Status)
+                                        {
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Pending:
+                                                <span class="layui-badge layui-bg-orange">待审批</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Approved:
+                                                <span class="layui-badge layui-bg-blue">已批准</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Rejected:
+                                                <span class="layui-badge layui-bg-red">已拒绝</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Effective:
+                                                <span class="layui-badge layui-bg-green">已生效</span>
+                                                break;
+                                            case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Cancelled:
+                                                <span class="layui-badge layui-bg-gray">已撤销</span>
+                                                break;
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="layui-row" style="margin-top: 15px;">
+                                <div class="layui-col-md6">
+                                    <label>变动前机构：</label>
+                                    <span>@Html.DisplayFor(model => model.PreviousOrganization.Name)</span>
+                                </div>
+                                <div class="layui-col-md6">
+                                    <label>变动后机构：</label>
+                                    <span>@Html.DisplayFor(model => model.NewOrganization.Name)</span>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.ChangeReason))
+                            {
+                                <div class="layui-row" style="margin-top: 15px;">
+                                    <div class="layui-col-md12">
+                                        <label>变动原因：</label>
+                                        <div style="margin-top: 5px; padding: 10px; background: #f8f8f8; border-radius: 5px;">
+                                            @Html.DisplayFor(model => model.ChangeReason)
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <form asp-action="Delete" method="post" style="display: inline;">
+                            <input type="hidden" asp-for="Id" />
+                            <button type="submit" class="layui-btn layui-btn-danger">确认删除</button>
+                        </form>
+                        <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">取消</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .layui-panel {
+        border: 1px solid #e6e6e6;
+        border-radius: 5px;
+    }
+    .layui-panel-title {
+        background: #f8f8f8;
+        padding: 10px 15px;
+        font-weight: bold;
+        border-bottom: 1px solid #e6e6e6;
+        color: #d93025;
+    }
+    .layui-panel-body {
+        padding: 15px;
+    }
+    .layui-panel-body label {
+        font-weight: bold;
+        color: #333;
+    }
+    .layui-panel-body .layui-row {
+        margin-bottom: 10px;
+    }
+</style>

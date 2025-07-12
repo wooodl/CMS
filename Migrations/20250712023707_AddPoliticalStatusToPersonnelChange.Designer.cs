@@ -4,6 +4,7 @@ using ComprehensiveManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ComprehensiveManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712023707_AddPoliticalStatusToPersonnelChange")]
+    partial class AddPoliticalStatusToPersonnelChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1293,12 +1295,12 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("NewDepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("NewGrade")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("NewOrganizationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("NewPoliticalStatus")
                         .HasMaxLength(50)
@@ -1311,12 +1313,12 @@ namespace ComprehensiveManagementSystem.Migrations
                     b.Property<Guid>("PersonnelId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("PreviousDepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PreviousGrade")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("PreviousOrganizationId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PreviousPoliticalStatus")
                         .HasMaxLength(50)
@@ -1342,11 +1344,11 @@ namespace ComprehensiveManagementSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NewOrganizationId");
+                    b.HasIndex("NewDepartmentId");
 
                     b.HasIndex("PersonnelId");
 
-                    b.HasIndex("PreviousOrganizationId");
+                    b.HasIndex("PreviousDepartmentId");
 
                     b.ToTable("PersonnelChange");
                 });
@@ -2380,9 +2382,9 @@ namespace ComprehensiveManagementSystem.Migrations
 
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelChange", b =>
                 {
-                    b.HasOne("ComprehensiveManagementSystem.Models.Organization", "NewOrganization")
+                    b.HasOne("ComprehensiveManagementSystem.Models.Department", "NewDepartment")
                         .WithMany()
-                        .HasForeignKey("NewOrganizationId")
+                        .HasForeignKey("NewDepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ComprehensiveManagementSystem.Models.PersonnelBasicInfo", "Personnel")
@@ -2391,16 +2393,16 @@ namespace ComprehensiveManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ComprehensiveManagementSystem.Models.Organization", "PreviousOrganization")
+                    b.HasOne("ComprehensiveManagementSystem.Models.Department", "PreviousDepartment")
                         .WithMany()
-                        .HasForeignKey("PreviousOrganizationId")
+                        .HasForeignKey("PreviousDepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("NewOrganization");
+                    b.Navigation("NewDepartment");
 
                     b.Navigation("Personnel");
 
-                    b.Navigation("PreviousOrganization");
+                    b.Navigation("PreviousDepartment");
                 });
 
             modelBuilder.Entity("ComprehensiveManagementSystem.Models.PersonnelFamilyMember", b =>

@@ -1,0 +1,313 @@
+@model ComprehensiveManagementSystem.Models.PersonnelChange
+
+@{
+    ViewData["Title"] = "新增人员变动";
+}
+
+<div class="layui-row">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>新增人员变动记录</h3>
+            </div>
+            <div class="layui-card-body">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-normal" lay-close="">
+                        <i class="layui-icon layui-icon-ok-circle"></i>
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="layui-alert layui-alert-danger" lay-close="">
+                        <i class="layui-icon layui-icon-close"></i>
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+                <form asp-action="Create" class="layui-form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">选择人员 <span class="required">*</span></label>
+                        <div class="layui-input-block">
+                            <select asp-for="PersonnelId" asp-items="ViewBag.PersonnelId as SelectList" id="personnelSelect" name="PersonnelId" lay-verify="required" lay-search="">
+                                <option value="">请选择人员</option>
+                            </select>
+                            <span asp-validation-for="PersonnelId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- 人员基本信息显示区域 -->
+                    <div id="personnelInfo" style="display: none; background: #f8f8f8; padding: 15px; margin: 10px 0; border-radius: 5px;">
+                        <h4>人员基本信息</h4>
+                        <div class="layui-row">
+                            <div class="layui-col-md3">
+                                <strong>姓名：</strong><span id="infoName"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>性别：</strong><span id="infoGender"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>出生年月：</strong><span id="infoBirthDate"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>籍贯：</strong><span id="infoNativePlace"></span>
+                            </div>
+                        </div>
+                        <div class="layui-row" style="margin-top: 10px;">
+                            <div class="layui-col-md3">
+                                <strong>当前部门：</strong><span id="infoDepartment"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>职务：</strong><span id="infoDuty"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>级别：</strong><span id="infoGrade"></span>
+                            </div>
+                            <div class="layui-col-md3">
+                                <strong>政治面貌：</strong><span id="infoPoliticalStatus"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动类型 <span class="required">*</span></label>
+                        <div class="layui-input-block">
+                            <select asp-for="ChangeType" asp-items="ViewBag.ChangeTypes as List<SelectListItem>" name="ChangeType" lay-verify="required">
+                                <option value="">请选择变动类型</option>
+                            </select>
+                            <span asp-validation-for="ChangeType" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动日期 <span class="required">*</span></label>
+                        <div class="layui-input-block">
+                            <input asp-for="ChangeDate" class="layui-input" id="changeDate" name="ChangeDate" lay-verify="required" readonly>
+                            <span asp-validation-for="ChangeDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动原因</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="ChangeReason" name="ChangeReason" placeholder="请输入变动原因" class="layui-textarea"></textarea>
+                            <span asp-validation-for="ChangeReason" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动前机构</label>
+                        <div class="layui-input-block">
+                            <select asp-for="PreviousOrganizationId" asp-items="ViewBag.PreviousOrganizationId as SelectList" name="PreviousOrganizationId" lay-search="">
+                                <option value="">请选择变动前机构</option>
+                            </select>
+                            <span asp-validation-for="PreviousOrganizationId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动后机构</label>
+                        <div class="layui-input-block">
+                            <select asp-for="NewOrganizationId" asp-items="ViewBag.NewOrganizationId as SelectList" name="NewOrganizationId" lay-search="">
+                                <option value="">请选择变动后机构</option>
+                            </select>
+                            <span asp-validation-for="NewOrganizationId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动前职务</label>
+                        <div class="layui-input-block">
+                            <input asp-for="PreviousPosition" class="layui-input" name="PreviousPosition" placeholder="请输入变动前职务">
+                            <span asp-validation-for="PreviousPosition" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动后职务</label>
+                        <div class="layui-input-block">
+                            <input asp-for="NewPosition" class="layui-input" name="NewPosition" placeholder="请输入变动后职务">
+                            <span asp-validation-for="NewPosition" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动前级别</label>
+                        <div class="layui-input-block">
+                            <input asp-for="PreviousGrade" class="layui-input" name="PreviousGrade" placeholder="请输入变动前级别">
+                            <span asp-validation-for="PreviousGrade" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动后级别</label>
+                        <div class="layui-input-block">
+                            <input asp-for="NewGrade" class="layui-input" name="NewGrade" placeholder="请输入变动后级别">
+                            <span asp-validation-for="NewGrade" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">生效日期</label>
+                        <div class="layui-input-block">
+                            <input asp-for="EffectiveDate" class="layui-input" id="effectiveDate" name="EffectiveDate" readonly>
+                            <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">办理人</label>
+                        <div class="layui-input-block">
+                            <input asp-for="ProcessedBy" class="layui-input" name="ProcessedBy" placeholder="请输入办理人">
+                            <span asp-validation-for="ProcessedBy" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">审批人</label>
+                        <div class="layui-input-block">
+                            <input asp-for="ApprovedBy" class="layui-input" name="ApprovedBy" placeholder="请输入审批人">
+                            <span asp-validation-for="ApprovedBy" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">变动状态</label>
+                        <div class="layui-input-block">
+                            <select asp-for="Status" asp-items="ViewBag.StatusList as List<SelectListItem>" name="Status">
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <textarea asp-for="Remarks" name="Remarks" placeholder="请输入备注信息" class="layui-textarea"></textarea>
+                            <span asp-validation-for="Remarks" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">相关文件</label>
+                        <div class="layui-input-block">
+                            <input asp-for="AttachmentPath" class="layui-input" name="AttachmentPath" placeholder="请输入文件路径">
+                            <span asp-validation-for="AttachmentPath" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">创建人</label>
+                        <div class="layui-input-block">
+                            <input asp-for="CreatedBy" class="layui-input" name="CreatedBy" placeholder="请输入创建人">
+                            <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item" style="margin-bottom: 60px;">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="submitForm">
+                                <i class="layui-icon layui-icon-ok"></i> 保存
+                            </button>
+                            <a href="@Url.Action("Index")" class="layui-btn layui-btn-primary">
+                                <i class="layui-icon layui-icon-return"></i> 返回列表
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        layui.use(['form', 'laydate', 'layer'], function(){
+            var form = layui.form;
+            var laydate = layui.laydate;
+            var layer = layui.layer;
+
+            // 日期选择器
+            laydate.render({
+                elem: '#changeDate',
+                type: 'date'
+            });
+
+            laydate.render({
+                elem: '#effectiveDate',
+                type: 'date'
+            });
+
+            // 监听人员选择变化
+            form.on('select()', function(data){
+                if(data.elem.id === 'personnelSelect' && data.value){
+                    loadPersonnelInfo(data.value);
+                }
+            });
+
+            // 表单提交验证
+            form.on('submit(submitForm)', function(data){
+                console.log('表单提交数据:', data.field);
+                
+                // 检查必填项
+                if (!data.field.PersonnelId) {
+                    layer.msg('请选择人员', {icon: 2});
+                    return false;
+                }
+                if (!data.field.ChangeType) {
+                    layer.msg('请选择变动类型', {icon: 2});
+                    return false;
+                }
+                if (!data.field.ChangeDate) {
+                    layer.msg('请选择变动日期', {icon: 2});
+                    return false;
+                }
+                
+                // 提交表单
+                return true;
+            });
+
+            // 加载人员信息
+            function loadPersonnelInfo(personnelId) {
+                $.ajax({
+                    url: '@Url.Action("GetPersonnelInfo")',
+                    type: 'GET',
+                    data: { personnelId: personnelId },
+                    success: function(data) {
+                        $('#infoName').text(data.name || '');
+                        $('#infoGender').text(data.gender === 'Male' ? '男' : '女');
+                        $('#infoBirthDate').text(data.birthDate || '');
+                        $('#infoNativePlace').text(data.nativePlace || '');
+                        $('#infoDepartment').text(data.department || '');
+                        $('#infoDuty').text(data.duty || '');
+                        $('#infoGrade').text(data.grade || '');
+                        $('#infoPoliticalStatus').text(data.politicalStatus || '');
+                        
+                        // 自动填充变动前机构
+                        if(data.departmentId) {
+                            $('select[name="PreviousOrganizationId"]').val(data.departmentId);
+                            form.render('select');
+                        }
+                        
+                        // 自动填充变动前职务和级别
+                        $('input[name="PreviousPosition"]').val(data.duty || '');
+                        $('input[name="PreviousGrade"]').val(data.grade || '');
+                        
+                        $('#personnelInfo').show();
+                    },
+                    error: function() {
+                        layer.msg('获取人员信息失败', {icon: 2});
+                    }
+                });
+            }
+        });
+    </script>
+    <style>
+        .required {
+            color: red;
+        }
+    </style>
+}

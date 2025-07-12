@@ -1,0 +1,303 @@
+@model ComprehensiveManagementSystem.Models.PersonnelChange
+
+@{
+    var isEdit = Model.Id > 0;
+    var changeTypeName = ViewBag.ChangeTypeName?.ToString() ?? "";
+}
+
+<form asp-action="@(isEdit ? "Edit" : "Create")" method="post" class="layui-form" lay-filter="modalForm">
+    @Html.AntiForgeryToken()
+    
+    @if (isEdit)
+    {
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+        <input type="hidden" asp-for="CreatedBy" />
+    }
+    
+    <input type="hidden" asp-for="ChangeType" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">人员<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <select asp-for="PersonnelId" lay-verify="required" lay-search lay-filter="personnelSelect">
+                <option value="">请选择人员</option>
+                @if (ViewBag.PersonnelId != null)
+                {
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.PersonnelId)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="PersonnelId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">变动时间<span style="color: red;">*</span></label>
+        <div class="layui-input-block">
+            <input type="date" asp-for="ChangeDate" lay-verify="required" class="layui-input" />
+            <span asp-validation-for="ChangeDate" class="text-danger"></span>
+        </div>
+    </div>
+
+    @switch (Model.ChangeType)
+    {
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Onboard:
+            <div class="layui-form-item">
+                <label class="layui-form-label">入职后机构</label>
+                <div class="layui-input-block">
+                    <select asp-for="NewOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.NewOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.NewOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="NewOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Resign:
+            <div class="layui-form-item">
+                <label class="layui-form-label">离职前机构</label>
+                <div class="layui-input-block">
+                    <select asp-for="PreviousOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.PreviousOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.PreviousOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="PreviousOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">离职后去向</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="NewPosition" class="layui-input" placeholder="请输入离职后去向，例如：转入某某公司、自主创业、退休等" />
+                    <span asp-validation-for="NewPosition" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferIn:
+            <div class="layui-form-item">
+                <label class="layui-form-label">调入前</label>
+                <div class="layui-input-block">
+                    <select asp-for="PreviousOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.PreviousOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.PreviousOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="PreviousOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">调入后</label>
+                <div class="layui-input-block">
+                    <select asp-for="NewOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.NewOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.NewOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="NewOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferOut:
+            <div class="layui-form-item">
+                <label class="layui-form-label">调出前</label>
+                <div class="layui-input-block">
+                    <select asp-for="PreviousOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.PreviousOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.PreviousOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="PreviousOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">调出后</label>
+                <div class="layui-input-block">
+                    <select asp-for="NewOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.NewOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.NewOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="NewOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Promotion:
+            <div class="layui-form-item">
+                <label class="layui-form-label">原等级</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="PreviousGrade" class="layui-input" placeholder="请输入原等级" />
+                    <span asp-validation-for="PreviousGrade" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">现等级</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="NewGrade" class="layui-input" placeholder="请输入现等级" />
+                    <span asp-validation-for="NewGrade" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.PartyDevelopment:
+            <div class="layui-form-item">
+                <label class="layui-form-label">原政治面貌</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="PreviousPoliticalStatus" class="layui-input" placeholder="请输入原政治面貌" />
+                    <span asp-validation-for="PreviousPoliticalStatus" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">现政治面貌</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="NewPoliticalStatus" class="layui-input" placeholder="请输入现政治面貌" />
+                    <span asp-validation-for="NewPoliticalStatus" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.PositionChange:
+            <div class="layui-form-item">
+                <label class="layui-form-label">原职务</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="PreviousPosition" class="layui-input" placeholder="请输入原职务" />
+                    <span asp-validation-for="PreviousPosition" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">现职务</label>
+                <div class="layui-input-block">
+                    <input type="text" asp-for="NewPosition" class="layui-input" placeholder="请输入现职务" />
+                    <span asp-validation-for="NewPosition" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+
+        case ComprehensiveManagementSystem.Models.PersonnelChangeType.OrganizationTransfer:
+            <div class="layui-form-item">
+                <label class="layui-form-label">原机构</label>
+                <div class="layui-input-block">
+                    <select asp-for="PreviousOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.PreviousOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.PreviousOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="PreviousOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">现机构</label>
+                <div class="layui-input-block">
+                    <select asp-for="NewOrganizationId" lay-search>
+                        <option value="">请选择机构</option>
+                        @if (ViewBag.NewOrganizationId != null)
+                        {
+                            @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.NewOrganizationId)
+                            {
+                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="NewOrganizationId" class="text-danger"></span>
+                </div>
+            </div>
+            break;
+    }
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">变动状态</label>
+        <div class="layui-input-block">
+            <select asp-for="Status">
+                @if (ViewBag.StatusList != null)
+                {
+                    @foreach (var item in (IEnumerable<SelectListItem>)ViewBag.StatusList)
+                    {
+                        <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">变动原因</label>
+        <div class="layui-input-block">
+            <textarea asp-for="ChangeReason" class="layui-textarea" placeholder="请输入变动原因"></textarea>
+            <span asp-validation-for="ChangeReason" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+            <textarea asp-for="Remarks" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+            <span asp-validation-for="Remarks" class="text-danger"></span>
+        </div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form;
+        
+        // 重新渲染表单
+        form.render();
+        
+        // 人员选择变化事件
+        form.on('select(personnelSelect)', function(data){
+            if(data.value) {
+                // 获取人员信息
+                $.get('@Url.Action("GetPersonnelInfo")', { personnelId: data.value })
+                    .done(function(response) {
+                        // 可以在这里根据人员信息自动填充一些字段
+                        console.log('人员信息:', response);
+                    });
+            }
+        });
+    });
+</script>

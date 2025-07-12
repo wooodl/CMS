@@ -1,0 +1,266 @@
+@model IEnumerable<ComprehensiveManagementSystem.Models.PersonnelChange>
+
+<!-- 搜索栏 -->
+<form class="layui-form layui-form-pane search-form" style="margin-bottom: 20px;">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="searchName" value="@ViewBag.SearchName" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <button type="button" class="layui-btn layui-btn-primary" onclick="searchData()">
+                <i class="layui-icon layui-icon-search"></i> 搜索
+            </button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="resetSearch()">
+                <i class="layui-icon layui-icon-refresh"></i> 重置
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- 操作按钮 -->
+<div style="margin-bottom: 15px;">
+    <button type="button" class="layui-btn layui-btn-normal" onclick="showCreateModal(@((int)ViewBag.ChangeType))">
+        <i class="layui-icon layui-icon-add-1"></i> 新增@(ViewBag.ChangeTypeName ?? "变动")记录
+    </button>
+</div>
+
+<!-- 表格 -->
+<table class="layui-table">
+    <thead>
+        <tr>
+            <th>变动时间</th>
+            <th>变动类型</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>籍贯</th>
+            <th>出生年月</th>
+            @switch((ComprehensiveManagementSystem.Models.PersonnelChangeType)ViewBag.ChangeType)
+            {
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.Onboard:
+                    <th>入职后机构</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.Resign:
+                    <th>离职前机构</th>
+                    <th>离职后去向</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferIn:
+                    <th>调入前</th>
+                    <th>调入后</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferOut:
+                    <th>调出前</th>
+                    <th>调出后</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.Promotion:
+                    <th>原等级</th>
+                    <th>现等级</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.PartyDevelopment:
+                    <th>原政治面貌</th>
+                    <th>现政治面貌</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.PositionChange:
+                    <th>原职务</th>
+                    <th>现职务</th>
+                    break;
+                case ComprehensiveManagementSystem.Models.PersonnelChangeType.OrganizationTransfer:
+                    <th>原机构</th>
+                    <th>现机构</th>
+                    break;
+            }
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>@item.ChangeDate.ToString("yyyy-MM-dd")</td>
+                <td>
+                    @switch(item.ChangeType)
+                    {
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Onboard:
+                            <span class="layui-badge layui-bg-green">入职</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Resign:
+                            <span class="layui-badge layui-bg-red">离职</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferIn:
+                            <span class="layui-badge layui-bg-blue">调入</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferOut:
+                            <span class="layui-badge layui-bg-orange">调出</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.Promotion:
+                            <span class="layui-badge layui-bg-green">晋升</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.PartyDevelopment:
+                            <span class="layui-badge layui-bg-cyan">党员发展</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.PositionChange:
+                            <span class="layui-badge">职务变动</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeType.OrganizationTransfer:
+                            <span class="layui-badge">机构变动</span>
+                            break;
+                    }
+                </td>
+                <td>@(item.Personnel?.Name ?? "")</td>
+                <td>@(item.Personnel?.Gender == ComprehensiveManagementSystem.Models.Gender.Male ? "男" : "女")</td>
+                <td>@(item.Personnel?.NativePlace ?? "")</td>
+                <td>@(item.Personnel?.BirthDate.ToString("yyyy-MM-dd") ?? "")</td>
+                @switch(item.ChangeType)
+                {
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.Onboard:
+                        <td>@(item.NewOrganization?.Name ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.Resign:
+                        <td>@(item.PreviousOrganization?.Name ?? "")</td>
+                        <td>@(item.NewPosition ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferIn:
+                        <td>@(item.PreviousOrganization?.Name ?? "")</td>
+                        <td>@(item.NewOrganization?.Name ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.TransferOut:
+                        <td>@(item.PreviousOrganization?.Name ?? "")</td>
+                        <td>@(item.NewOrganization?.Name ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.Promotion:
+                        <td>@(item.PreviousGrade ?? "")</td>
+                        <td>@(item.NewGrade ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.PartyDevelopment:
+                        <td>@(item.PreviousPoliticalStatus ?? "")</td>
+                        <td>@(item.NewPoliticalStatus ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.PositionChange:
+                        <td>@(item.PreviousPosition ?? "")</td>
+                        <td>@(item.NewPosition ?? "")</td>
+                        break;
+                    case ComprehensiveManagementSystem.Models.PersonnelChangeType.OrganizationTransfer:
+                        <td>@(item.PreviousOrganization?.Name ?? "")</td>
+                        <td>@(item.NewOrganization?.Name ?? "")</td>
+                        break;
+                }
+                <td>
+                    @switch(item.Status)
+                    {
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Pending:
+                            <span class="layui-badge layui-bg-orange">待审批</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Approved:
+                            <span class="layui-badge layui-bg-blue">已批准</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Rejected:
+                            <span class="layui-badge layui-bg-red">已拒绝</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Effective:
+                            <span class="layui-badge layui-bg-green">已生效</span>
+                            break;
+                        case ComprehensiveManagementSystem.Models.PersonnelChangeStatus.Cancelled:
+                            <span class="layui-badge layui-bg-gray">已撤销</span>
+                            break;
+                    }
+                </td>
+                <td>
+                    <div class="layui-btn-group">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" onclick="showDetails(@item.Id)">
+                            <i class="layui-icon layui-icon-about"></i> 详情
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" onclick="showEditModal(@item.Id)">
+                            <i class="layui-icon layui-icon-edit"></i> 编辑
+                        </button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" onclick="deleteRecord(@item.Id, '@(item.Personnel?.Name ?? "")')">
+                            <i class="layui-icon layui-icon-delete"></i> 删除
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="100%" style="text-align: center; padding: 50px; color: #999;">
+                    <i class="layui-icon layui-icon-face-cry" style="font-size: 30px; display: block; margin-bottom: 10px;"></i>
+                    暂无@(ViewBag.ChangeTypeName ?? "变动")记录
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- 分页 -->
+@if (ViewBag.TotalPages > 1)
+{
+    <div id="pagination-@ViewBag.ChangeType" style="text-align: center; margin-top: 20px;"></div>
+}
+
+<!-- 统计信息 -->
+<div class="layui-text" style="margin-top: 15px;">
+    <p>共 @ViewBag.TotalCount 条记录，当前第 @ViewBag.CurrentPage 页，共 @ViewBag.TotalPages 页</p>
+</div>
+
+<script>
+    // 搜索功能
+    function searchData() {
+        var searchName = $('.search-form input[name="searchName"]').val();
+        var currentTab = $('.layui-tab-title .layui-this').attr('lay-id');
+        
+        $.get('@Url.Action("TabData")', {
+            changeType: currentTab,
+            searchName: searchName,
+            page: 1
+        }).done(function(data) {
+            $('#tab-content-' + currentTab).html(data);
+        });
+    }
+
+    // 重置搜索
+    function resetSearch() {
+        $('.search-form input[name="searchName"]').val('');
+        searchData();
+    }
+
+    // 显示详情
+    function showDetails(id) {
+        window.open('@Url.Action("Details")?id=' + id, '_blank');
+    }
+
+    // 分页
+    @if (ViewBag.TotalPages > 1)
+    {
+        <text>
+        $(document).ready(function() {
+            if (typeof window.layuiLaypage !== 'undefined') {
+                window.layuiLaypage.render({
+                    elem: 'pagination-@ViewBag.ChangeType',
+                    count: @ViewBag.TotalCount,
+                    limit: @ViewBag.PageSize,
+                    curr: @ViewBag.CurrentPage,
+                    layout: ['count', 'prev', 'page', 'next', 'skip'],
+                    jump: function(obj, first){
+                        if(!first){
+                            var searchName = $('.search-form input[name="searchName"]').val();
+                            $.get('@Url.Action("TabData")', {
+                                changeType: @ViewBag.ChangeType,
+                                searchName: searchName,
+                                page: obj.curr
+                            }).done(function(data) {
+                                $('#tab-content-@ViewBag.ChangeType').html(data);
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        </text>
+    }
+</script>

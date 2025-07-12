@@ -18,11 +18,15 @@
         .layui-layout-admin .layui-body {
             top: 60px;
             left: 200px;
+            bottom: 60px;
             transition: left 0.3s ease;
         }
         
         .content-wrapper {
             padding: 15px;
+            padding-bottom: 100px;
+            min-height: calc(100vh - 150px);
+            margin-bottom: 20px;
         }
         
         .layui-layout-admin .layui-side {
@@ -36,6 +40,10 @@
         
         .layui-layout-admin.layui-layout-shrink .layui-body {
             left: 60px;
+        }
+        
+        .layui-layout-admin.layui-layout-shrink .layui-footer {
+            left: 60px !important;
         }
         
         .layui-layout-admin.layui-layout-shrink .layui-side-scroll .layui-nav-tree .layui-nav-item > a {
@@ -287,6 +295,7 @@
         }
         .content-wrapper {
             padding: 15px;
+            padding-bottom: 100px;
         }
     </style>
 </head>
@@ -365,6 +374,7 @@
                         <dl class="layui-nav-child">
                             <dd><a asp-controller="PersonnelBasicInfo" asp-action="Index">人员信息</a></dd>
                             <dd><a asp-controller="Personnel" asp-action="Index">简化人员</a></dd>
+                            <dd><a asp-controller="PersonnelChange" asp-action="Index">人员变动</a></dd>
                             <dd><a asp-controller="Department" asp-action="Index">部门管理</a></dd>
                         </dl>
                     </li>
@@ -467,8 +477,8 @@
         </div>
         
         <!-- 底部 -->
-        <div class="layui-footer">
-            © 2023 综合管理系统 - 版权所有
+        <div class="layui-footer" style="position: fixed; bottom: 0; left: 200px; right: 0; height: 50px; line-height: 50px; padding: 0 15px; background: #fafafa; border-top: 1px solid #e6e6e6; z-index: 1000; transition: left 0.3s ease;">
+            © 2025 综合管理系统 - 版权所有
         </div>
     </div>
 
